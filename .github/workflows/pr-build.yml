@@ -1,0 +1,87 @@
+# Every PR push builds a prerelease "v<ModuleVersion>" (from src-plugin/Plugin/PluginManifest.cs)
+# with install zips; a new push to the same PR replaces it. On merge, a plain X.Y.Z version is
+# promoted to the latest full release (the exact build that was tested); -alpha.N / -beta.N stay prereleases.
+name: PR build
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  GH_REPO: ${{ github.repository }}
+  PR: ${{ github.event.pull_request.number }}
+  SHA: ${{ github.event.pull_request.head.sha }}
+  VERSION_RE: 'ModuleVersion => "\K[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?'
+
+jobs:
+  build:
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      # Build the PR head itself (not GitHub's merge commit) so the release matches its tag
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.SHA }}
+
+      - name: Version
+        id: version
+        run: |
+          TAG="v$(grep -oP "$VERSION_RE" src-plugin/Plugin/PluginManifest.cs)"
+          # An existing release for this tag must come from this PR, otherwise someone forgot to bump
+          if BODY=$(gh release view "$TAG" --json body --jq .body 2>/dev/null) && ! grep -q "from #$PR\.$" <<<"$BODY"; then
+            echo "::error::$TAG already belongs to another PR. Bump ModuleVersion in src-plugin/Plugin/PluginManifest.cs."
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Publish
+        run: |
+          dotnet publish src-plugin/K4-Arenas.csproj -c Release
+          dotnet publish src-botsplugin/K4-Arenas-Bots.csproj -c Release
+
+      - name: Zip
+        run: |
+          (cd src-plugin/bin/K4-Arenas && zip -qr "$GITHUB_WORKSPACE/K4-Arenas.zip" .)
+          (cd src-botsplugin/bin/K4-Arenas-Bots && zip -qr "$GITHUB_WORKSPACE/K4-Arenas-Bots.zip" .)
+
+      - name: Release
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          gh release delete "$TAG" --cleanup-tag --yes 2>/dev/null || true
+          gh release create "$TAG" K4-Arenas.zip K4-Arenas-Bots.zip \
+            --prerelease --target "$SHA" \
+            --title "$TAG: $PR_TITLE" \
+            --notes "Extract into \`addons/counterstrikesharp/\` on the server. K4-Arenas-Bots.zip is optional.
+
+          Test build of ${SHA::7} from #$PR."
+
+  promote:
+    if: github.event.action == 'closed' && github.event.pull_request.merged
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.SHA }}
+
+      - name: Mark release as latest (stable versions only)
+        run: |
+          TAG="v$(grep -oP "$VERSION_RE" src-plugin/Plugin/PluginManifest.cs)"
+          if [[ "$TAG" == *-* ]]; then
+            echo "$TAG is a pre-release version, leaving it as a prerelease."
+          else
+            gh release edit "$TAG" --prerelease=false --latest
+          fi
