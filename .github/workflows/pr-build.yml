@@ -1,6 +1,7 @@
 # Every PR push builds a prerelease "v<ModuleVersion>" (from src-plugin/Plugin/PluginManifest.cs)
 # with install zips; a new push to the same PR replaces it. On merge, a plain X.Y.Z version is
-# promoted to the latest full release (the exact build that was tested); -alpha.N / -beta.N stay prereleases.
+# promoted to the latest full release (the exact build that was tested), and so is a release candidate (-rc.N)
+# so servers that install "latest" can get it; -alpha.N / -beta.N stay prereleases.
 name: PR build
 
 on:
@@ -93,10 +94,10 @@ jobs:
         with:
           ref: ${{ env.SHA }}
 
-      - name: Mark release as latest (stable versions only)
+      - name: Mark release as latest (stable and release candidates)
         run: |
           TAG="v$(grep -oP "$VERSION_RE" src-plugin/Plugin/PluginManifest.cs)"
-          if [[ "$TAG" == *-* ]]; then
+          if [[ "$TAG" == *-* && "$TAG" != *-rc.* ]]; then
             echo "$TAG is a pre-release version, leaving it as a prerelease."
           else
             gh release edit "$TAG" --prerelease=false --latest

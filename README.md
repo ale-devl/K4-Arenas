@@ -32,7 +32,7 @@ That's all: the menu plugins ([CSSUniversalMenuAPI](https://github.com/CSGALS/CS
 
 **Coming from K4-Arenas:** delete `plugins/K4-Arenas`, `plugins/K4-Arenas-Bots` and `shared/K4-ArenaSharedApi` first, so both plugins don't run at once. Old K4-Arenas addons need rebuilding against `alerena-api` before they connect.
 
-**Versions:** `-alpha` and `-beta` releases are untested builds. A plain version like `3.0.0` has been played on a live server.
+**Versions:** `-alpha` and `-beta` are untested development builds (GitHub prereleases). A release candidate (`-rc.N`) is the installable build being tested on a live server. A plain version like `3.0.0` has passed that test.
 
 ## Commands
 

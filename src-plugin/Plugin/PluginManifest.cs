@@ -10,7 +10,7 @@ namespace Alerena
 
         public override string ModuleAuthor => "ale-devl";
 
-        public override string ModuleVersion => "3.0.0-beta.2 " +
+        public override string ModuleVersion => "3.0.0-rc.1 " +
 #if RELEASE
             "(release)";
 #else
