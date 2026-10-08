@@ -18,11 +18,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Build the PR head itself (not GitHub's merge commit) so the release matches its tag
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
 
