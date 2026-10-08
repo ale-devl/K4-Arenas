@@ -2,8 +2,8 @@ using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Translations;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
-using CounterStrikeSharp.API.Modules.Menu;
 using CounterStrikeSharp.API.Modules.Utils;
+using CSSUniversalMenuAPI;
 using K4ArenaSharedApi;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -151,28 +151,44 @@ public class ArenaPlayer
 		});
 	}
 
-	public void ShowRoundPreferenceMenu()
+	// Drawn by whichever CSSUniversalMenuAPI driver is installed (SharpModMenu ships in the release zip)
+	private IMenu? CreateMenu(string titleKey, IMenu? parent = null)
 	{
-		ShowChatRoundPreferenceMenu();
-	}
-
-	private void ShowChatRoundPreferenceMenu()
-	{
-		ChatMenu roundPreferenceMenu = new ChatMenu(Localizer.ForPlayer(Controller, "k4.menu.roundpref.title"));
-		foreach (RoundType roundType in RoundType.RoundTypes)
+		if (UniversalMenu.DefaultDriver is null)
 		{
-			bool isRoundTypeEnabled = RoundPreferences.Contains(roundType);
-			roundPreferenceMenu.AddMenuOption(isRoundTypeEnabled ? Localizer.ForPlayer(Controller, "k4.menu.roundpref.item_enabled", Localizer.ForPlayer(Controller, roundType.Name)) : Localizer.ForPlayer(Controller, "k4.menu.roundpref.item_disabled", Localizer.ForPlayer(Controller, roundType.Name)),
-				(player, option) =>
-				{
-					ToggleRoundPreference(roundType);
-					Plugin.SavePlayer(this);
-				}
-			);
+			Controller.PrintToChat($" {Localizer.ForPlayer(Controller, "k4.general.prefix")} {Localizer.ForPlayer(Controller, "k4.chat.no_menu_driver")}");
+			Plugin.Logger.LogError("No menu plugin installed: !guns and !rounds need CSSUniversalMenuAPI with a driver such as SharpModMenu");
+			return null;
 		}
 
-		MenuManager.OpenChatMenu(Controller, roundPreferenceMenu);
+		IMenu menu = parent is null ? UniversalMenu.CreateMenu(Controller) : UniversalMenu.CreateMenu(parent);
+		menu.Title = Localizer.ForPlayer(Controller, titleKey);
+		return menu;
 	}
+
+	public void ShowRoundPreferenceMenu()
+	{
+		IMenu? menu = CreateMenu("k4.menu.roundpref.title");
+		if (menu is null)
+			return;
+
+		foreach (RoundType roundType in RoundType.RoundTypes)
+		{
+			IMenuItem item = menu.CreateItem();
+			item.Title = RoundItemTitle(roundType);
+			item.Selected += _ =>
+			{
+				ToggleRoundPreference(roundType);
+				item.Title = RoundItemTitle(roundType);
+				Plugin.SavePlayer(this);
+			};
+		}
+
+		menu.Display();
+	}
+
+	private string RoundItemTitle(RoundType roundType)
+		=> Localizer.ForPlayer(Controller, RoundPreferences.Contains(roundType) ? "k4.menu.roundpref.item_enabled" : "k4.menu.roundpref.item_disabled", Localizer.ForPlayer(Controller, roundType.Name));
 
 	private void ToggleRoundPreference(RoundType roundType)
 	{
@@ -198,24 +214,18 @@ public class ArenaPlayer
 
 	public void ShowWeaponPreferenceMenu()
 	{
-		ShowChatWeaponPreferenceMenu();
-	}
+		IMenu? menu = CreateMenu("k4.menu.weaponpref.title");
+		if (menu is null)
+			return;
 
-	private void ShowChatWeaponPreferenceMenu()
-	{
-		ChatMenu weaponPreferenceMenu = new ChatMenu(Localizer.ForPlayer(Controller, "k4.menu.weaponpref.title"));
-		foreach (WeaponType weaponType in Enum.GetValues(typeof(WeaponType)))
+		foreach (WeaponType weaponType in Enum.GetValues<WeaponType>().Where(t => t != WeaponType.Unknown && IsAllowedWeaponType(t)))
 		{
-			if (weaponType == WeaponType.Unknown || !IsAllowedWeaponType(weaponType))
-				continue;
-			weaponPreferenceMenu.AddMenuOption(Localizer.ForPlayer(Controller, $"k4.rounds.{weaponType.ToString().ToLower()}"),
-				(player, option) =>
-				{
-					ShowWeaponSubPreferenceMenu(weaponType);
-				}
-			);
+			IMenuItem item = menu.CreateItem();
+			item.Title = Localizer.ForPlayer(Controller, $"k4.rounds.{weaponType.ToString().ToLower()}");
+			item.Selected += _ => ShowWeaponSubPreferenceMenu(menu, weaponType);
 		}
-		MenuManager.OpenChatMenu(Controller, weaponPreferenceMenu);
+
+		menu.Display();
 	}
 
 	private bool IsAllowedWeaponType(WeaponType weaponType)
@@ -232,43 +242,28 @@ public class ArenaPlayer
 		};
 	}
 
-	public void ShowWeaponSubPreferenceMenu(WeaponType weaponType)
+	private void ShowWeaponSubPreferenceMenu(IMenu parent, WeaponType weaponType)
 	{
-		ShowChatWeaponSubPreferenceMenu(weaponType);
-	}
+		IMenu? menu = CreateMenu("k4.menu.weaponpref.title", parent);
+		if (menu is null)
+			return;
 
-	private void ShowChatWeaponSubPreferenceMenu(WeaponType weaponType)
-	{
-		ChatMenu primaryPreferenceMenu = new ChatMenu(Localizer.ForPlayer(Controller, "k4.menu.weaponpref.title"));
-		AddWeaponOptions(primaryPreferenceMenu, weaponType);
-		MenuManager.OpenChatMenu(Controller, primaryPreferenceMenu);
-	}
-
-	private void AddWeaponOptions(ChatMenu menu, WeaponType weaponType)
-	{
-		menu.AddMenuOption(GetWeaponPreference(weaponType) is null ? Localizer.ForPlayer(Controller, "k4.menu.weaponpref.item_enabled", Localizer.ForPlayer(Controller, "k4.general.random")) : Localizer.ForPlayer(Controller, "k4.menu.weaponpref.item_disabled", Localizer.ForPlayer(Controller, "k4.general.random")),
-			(player, option) =>
-			{
-				SetWeaponPreference(weaponType, null);
-				Plugin.SavePlayer(this);
-			}
-		);
-
-		List<CsItem> possibleItems = WeaponModel.GetWeaponList(weaponType);
-		foreach (CsItem item in possibleItems)
+		// null is "Random"
+		IEnumerable<CsItem?> weapons = WeaponModel.GetWeaponList(weaponType).Where(w => WeaponModel.GetWeaponType(w) == weaponType).Select(w => (CsItem?)w);
+		foreach (CsItem? weapon in weapons.Prepend(null))
 		{
-			if (WeaponModel.GetWeaponType(item) != weaponType)
-				continue;
-
-			bool isItemEnabled = GetWeaponPreference(weaponType) == item;
-			menu.AddMenuOption(isItemEnabled ? Localizer.ForPlayer(Controller, "k4.menu.weaponpref.item_enabled", Localizer.ForPlayer(Controller, item.ToString())) : Localizer.ForPlayer(Controller, "k4.menu.weaponpref.item_disabled", Localizer.ForPlayer(Controller, item.ToString())),
-				(player, option) =>
-				{
-					SetWeaponPreference(weaponType, item);
-					Plugin.SavePlayer(this);
-				}
-			);
+			string name = Localizer.ForPlayer(Controller, weapon?.ToString() ?? "k4.general.random");
+			IMenuItem item = menu.CreateItem();
+			item.Title = Localizer.ForPlayer(Controller, GetWeaponPreference(weaponType) == weapon ? "k4.menu.weaponpref.item_enabled" : "k4.menu.weaponpref.item_disabled", name);
+			item.Selected += _ =>
+			{
+				SetWeaponPreference(weaponType, weapon);
+				Plugin.SavePlayer(this);
+				menu.Close(); // back to the weapon types
+			};
 		}
+
+		menu.Display();
 	}
 
 	private void SetWeaponPreference(WeaponType weaponType, CsItem? item)

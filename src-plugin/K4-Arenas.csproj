@@ -16,6 +16,8 @@
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Dapper" Version="2.1.89" />
+    <!-- Provided on the server by shared/CSSUniversalMenuAPI (bundled in the release zip) -->
+    <PackageReference Include="CSSUniversalMenuAPI" Version="0.5.0" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.12" />
     <ProjectReference Include="../src-shared/K4-ArenaSharedApi.csproj">
       <Private>false</Private>
