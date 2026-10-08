@@ -10,7 +10,7 @@
     "port": 3306,
     "sslmode": "preferred",
     "table-prefix": "",
-    "table-purge-days": 30
+    "table-purge-days": 0
   },
   "command-settings": {
     "gun-pref-commands": [
@@ -46,8 +46,8 @@
     {
       "TranslationName": "k4.rounds.rifle",
       "TeamSize": 1,
-      "PrimaryWeapon": "weapon_ak47",
-      "SecondaryWeapon": "weapon_deagle",
+      "PrimaryWeapon": null,
+      "SecondaryWeapon": null,
       "UsePreferredPrimary": true,
       "PrimaryPreference": "Rifle",
       "UsePreferredSecondary": true,
@@ -58,14 +58,14 @@
     {
       "TranslationName": "k4.rounds.sniper",
       "TeamSize": 1,
-      "PrimaryWeapon": "weapon_awp",
-      "SecondaryWeapon": "weapon_deagle",
+      "PrimaryWeapon": null,
+      "SecondaryWeapon": null,
       "UsePreferredPrimary": true,
       "PrimaryPreference": "Sniper",
       "UsePreferredSecondary": true,
       "Armor": true,
       "Helmet": true,
-      "EnabledByDefault": true
+      "EnabledByDefault": false
     },
     {
       "TranslationName": "k4.rounds.shotgun",
@@ -95,7 +95,7 @@
       "TranslationName": "k4.rounds.scout",
       "TeamSize": 1,
       "PrimaryWeapon": "weapon_ssg08",
-      "SecondaryWeapon": "weapon_deagle",
+      "SecondaryWeapon": null,
       "UsePreferredPrimary": false,
       "PrimaryPreference": null,
       "UsePreferredSecondary": true,
@@ -107,7 +107,7 @@
       "TranslationName": "k4.rounds.awp",
       "TeamSize": 1,
       "PrimaryWeapon": "weapon_awp",
-      "SecondaryWeapon": "weapon_deagle",
+      "SecondaryWeapon": null,
       "UsePreferredPrimary": false,
       "PrimaryPreference": null,
       "UsePreferredSecondary": true,
@@ -190,8 +190,8 @@
   ],
   "compatibility-settings": {
     "force-arena-clantags": false,
-    "block-flash-of-not-opponent": false,
-    "block-damage-of-not-opponent": false,
+    "block-flash-of-not-opponent": true,
+    "block-damage-of-not-opponent": true,
     "give-knife-by-default": true,
     "disable-clantags": false,
     "prevent-draw-rounds": true
