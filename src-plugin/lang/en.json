@@ -73,5 +73,18 @@
   "k4.chat.top_entry": "{silver}{0}. {lime}{1}{silver}: {lime}{2}{silver} ({3}W {4}L {5}D)",
   "k4.chat.top_empty": "{silver}No rated duels yet.",
   "k4.chat.top_self": "{silver}Your Elo: {lime}{0}",
-  "k4.chat.no_menu_driver": "{silver}Menus need the {lime}SharpModMenu{silver} plugin, ask the server admin."
+  "k4.chat.no_menu_driver": "{silver}Menus need the {lime}SharpModMenu{silver} plugin, ask the server admin.",
+
+  "k4.admin.title": "Arena settings",
+  "k4.admin.on": "ON",
+  "k4.admin.off": "OFF",
+  "k4.admin.matchmaking": "Matchmaking",
+  "k4.admin.rotation": "Rotation",
+  "k4.admin.ladder": "Ladder",
+  "k4.admin.default_rounds": "Rounds on by default",
+  "k4.admin.fallback_round": "Fallback round",
+  "k4.admin.prevent_draws": "Prevent draws",
+  "k4.admin.block_damage": "Block damage from other arenas",
+  "k4.admin.block_flash": "Block flashes from other arenas",
+  "k4.admin.knife": "Knife by default"
 }

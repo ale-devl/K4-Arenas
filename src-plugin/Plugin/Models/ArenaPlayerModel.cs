@@ -151,24 +151,9 @@ public class ArenaPlayer
 		});
 	}
 
-	// Drawn by whichever CSSUniversalMenuAPI driver is installed (SharpModMenu ships in the release zip)
-	private IMenu? CreateMenu(string titleKey, IMenu? parent = null)
-	{
-		if (UniversalMenu.DefaultDriver is null)
-		{
-			Controller.PrintToChat($" {Localizer.ForPlayer(Controller, "k4.general.prefix")} {Localizer.ForPlayer(Controller, "k4.chat.no_menu_driver")}");
-			Plugin.Logger.LogError("No menu plugin installed: !guns and !rounds need CSSUniversalMenuAPI with a driver such as SharpModMenu");
-			return null;
-		}
-
-		IMenu menu = parent is null ? UniversalMenu.CreateMenu(Controller) : UniversalMenu.CreateMenu(parent);
-		menu.Title = Localizer.ForPlayer(Controller, titleKey);
-		return menu;
-	}
-
 	public void ShowRoundPreferenceMenu()
 	{
-		IMenu? menu = CreateMenu("k4.menu.roundpref.title");
+		IMenu? menu = Plugin.CreateMenu(Controller, "k4.menu.roundpref.title");
 		if (menu is null)
 			return;
 
@@ -214,7 +199,7 @@ public class ArenaPlayer
 
 	public void ShowWeaponPreferenceMenu()
 	{
-		IMenu? menu = CreateMenu("k4.menu.weaponpref.title");
+		IMenu? menu = Plugin.CreateMenu(Controller, "k4.menu.weaponpref.title");
 		if (menu is null)
 			return;
 
@@ -244,7 +229,7 @@ public class ArenaPlayer
 
 	private void ShowWeaponSubPreferenceMenu(IMenu parent, WeaponType weaponType)
 	{
-		IMenu? menu = CreateMenu("k4.menu.weaponpref.title", parent);
+		IMenu? menu = Plugin.CreateMenu(Controller, "k4.menu.weaponpref.title", parent);
 		if (menu is null)
 			return;
 

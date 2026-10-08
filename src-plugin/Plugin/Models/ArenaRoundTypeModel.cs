@@ -66,7 +66,6 @@ namespace K4Arenas.Models
 		public static void ClearRoundTypes()
 		{
 			RoundTypes.Clear();
-			nextID = 0;
 		}
 
 		public static void ResetRoundTypes()

@@ -72,5 +72,18 @@
   "k4.chat.top_entry": "{silver}{0}. {lime}{1}{silver}: {lime}{2}{silver} ({3}W {4}P {5}R)",
   "k4.chat.top_empty": "{silver}Brak rozegranych pojedynków.",
   "k4.chat.top_self": "{silver}Twoje Elo: {lime}{0}",
-  "k4.chat.no_menu_driver": "{silver}Menu wymaga wtyczki {lime}SharpModMenu{silver}, zapytaj administratora serwera."
+  "k4.chat.no_menu_driver": "{silver}Menu wymaga wtyczki {lime}SharpModMenu{silver}, zapytaj administratora serwera.",
+
+  "k4.admin.title": "Ustawienia areny",
+  "k4.admin.on": "WŁ",
+  "k4.admin.off": "WYŁ",
+  "k4.admin.matchmaking": "Dobieranie",
+  "k4.admin.rotation": "Rotacja",
+  "k4.admin.ladder": "Drabinka",
+  "k4.admin.default_rounds": "Rundy domyślnie włączone",
+  "k4.admin.fallback_round": "Runda zapasowa",
+  "k4.admin.prevent_draws": "Bez remisów",
+  "k4.admin.block_damage": "Blokuj obrażenia z innych aren",
+  "k4.admin.block_flash": "Blokuj oślepienia z innych aren",
+  "k4.admin.knife": "Nóż domyślnie"
 }
