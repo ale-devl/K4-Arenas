@@ -21,6 +21,10 @@ namespace K4Arenas
 		[JsonPropertyName("use-predefined-config")]
 		public bool UsePredefinedConfig { get; set; } = true;
 
+		// "rotation": everyone faces the opponents they've met least this session. "ladder": winners move up, losers down.
+		[JsonPropertyName("matchmaking")]
+		public string Matchmaking { get; set; } = "rotation";
+
 		[JsonPropertyName("database-settings")]
 		public DatabaseSettings DatabaseSettings { get; set; } = new DatabaseSettings();
 

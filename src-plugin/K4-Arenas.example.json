@@ -2,6 +2,7 @@
 // Keys missing from K4-Arenas.json fall back to the defaults in PluginConfig.cs.
 {
   "use-predefined-config": true,
+  "matchmaking": "rotation",
   "database-settings": {
     "table-purge-days": 0
   },

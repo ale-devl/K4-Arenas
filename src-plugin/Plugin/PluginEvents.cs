@@ -122,6 +122,10 @@ namespace K4Arenas
 
 				WaitingArenaPlayers = new Queue<ArenaPlayer>(WaitingArenaPlayers.Where(p => p.Controller != playerController));
 				Arenas?.ArenaList.ForEach(arena => arena.RemovePlayer(playerController));
+
+				// Last real player left: the session is over, start rotation fresh next time
+				if (!Utilities.GetPlayers().Any(p => p != playerController && !p.IsBot && !p.IsHLTV))
+					MatchHistory.Clear();
 				TerminateRoundIfPossible();
 				return HookResult.Continue;
 			});
@@ -303,6 +307,14 @@ namespace K4Arenas
 				// ? Prioritize real players over bots
 				notAFKrankedPlayers = new Queue<ArenaPlayer>(notAFKrankedPlayers.OrderBy(p => p.Controller.IsBot));
 
+				// ? Rotation: arenas take players in pairs, so order real players into this round's least-met pairs (bots stay last)
+				if (UseRotation)
+				{
+					List<ArenaPlayer> realPlayers = [.. notAFKrankedPlayers.Where(p => !p.Controller.IsBot)];
+					List<int> order = MatchHistory.Order([.. realPlayers.Select(p => p.SteamID)], Random.Shared);
+					notAFKrankedPlayers = new Queue<ArenaPlayer>(order.Select(i => realPlayers[i]).Concat(notAFKrankedPlayers.Where(p => p.Controller.IsBot)));
+				}
+
 				Challenges.RemoveAll(c => !c.Player1.IsValid || !c.Player2.IsValid);
 
 				int displayIndex = 1;
@@ -344,6 +356,20 @@ namespace K4Arenas
 						Arenas.ArenaList[arenaID].AddPlayers(null, null, null, displayIndex, (Arenas.Count - displayIndex) * 50);
 						displayIndex++;
 					}
+				}
+
+				// ? Remember who met whom and who sat out alone (real players only)
+				foreach (Arena arena in Arenas.ArenaList.Where(a => a.ArenaID > 0))
+				{
+					List<ArenaPlayer> team1 = arena.Team1?.Where(p => !p.Controller.IsBot).ToList() ?? [];
+					List<ArenaPlayer> team2 = arena.Team2?.Where(p => !p.Controller.IsBot).ToList() ?? [];
+
+					if (arena.Team1 is null || arena.Team2 is null)
+						team1.Concat(team2).ToList().ForEach(p => MatchHistory.RecordBye(p.SteamID));
+					else
+						foreach (ArenaPlayer a in team1)
+							foreach (ArenaPlayer b in team2)
+								MatchHistory.RecordMatch(a.SteamID, b.SteamID);
 				}
 
 				while (notAFKrankedPlayers.Count > 0)
