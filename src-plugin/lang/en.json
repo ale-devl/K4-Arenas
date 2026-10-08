@@ -45,13 +45,13 @@
   "k4.chat.afk_enabled": "{silver}You are now AFK. Use {gold}!{0} {silver}to disable it.",
   "k4.chat.afk_disabled": "{silver}You are no longer AFK. ",
 
-  "k4.menu.roundpref.title": "{lightred}Arena Round Preferences",
-  "k4.menu.roundpref.item_enabled": "{0} {lime}Enabled",
-  "k4.menu.roundpref.item_disabled": "{0} {red}Disabled",
+  "k4.menu.roundpref.title": "Arena Round Preferences",
+  "k4.menu.roundpref.item_enabled": "{0} Enabled",
+  "k4.menu.roundpref.item_disabled": "{0} Disabled",
 
-  "k4.menu.weaponpref.title": "{lightred}Arena Weapon Preferences",
-  "k4.menu.weaponpref.item_enabled": "{gold}{0} {lime}(Selected)",
-  "k4.menu.weaponpref.item_disabled": "{gold}{0}",
+  "k4.menu.weaponpref.title": "Arena Weapon Preferences",
+  "k4.menu.weaponpref.item_enabled": "{0} (Selected)",
+  "k4.menu.weaponpref.item_disabled": "{0}",
   "k4.chat.weapon_preferences_added": "{silver}You have added {lime}{0}{silver} to your weapon preferences.",
 
   "k4.rounds.rifle": "Rifle",
@@ -72,5 +72,6 @@
   "k4.chat.top_title": "{silver}Best players by Elo:",
   "k4.chat.top_entry": "{silver}{0}. {lime}{1}{silver}: {lime}{2}{silver} ({3}W {4}L {5}D)",
   "k4.chat.top_empty": "{silver}No rated duels yet.",
-  "k4.chat.top_self": "{silver}Your Elo: {lime}{0}"
+  "k4.chat.top_self": "{silver}Your Elo: {lime}{0}",
+  "k4.chat.no_menu_driver": "{silver}Menus need the {lime}SharpModMenu{silver} plugin, ask the server admin."
 }

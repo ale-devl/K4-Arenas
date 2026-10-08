@@ -44,13 +44,13 @@
   "k4.chat.afk_enabled": "{silver}Jesteś teraz w trybie AFK. Użyj {gold}!{0} {silver}, aby wrócić do gry.",
   "k4.chat.afk_disabled": "{silver}Nie jesteś już w trybie AFK.",
 
-  "k4.menu.roundpref.title": "{lightred}Preferencje Rundy",
-  "k4.menu.roundpref.item_enabled": "{0} {lime}Włączone",
-  "k4.menu.roundpref.item_disabled": "{0} {red}Wyłączone",
+  "k4.menu.roundpref.title": "Preferencje Rundy",
+  "k4.menu.roundpref.item_enabled": "{0} Włączone",
+  "k4.menu.roundpref.item_disabled": "{0} Wyłączone",
 
-  "k4.menu.weaponpref.title": "{lightred}Preferencje Broni",
-  "k4.menu.weaponpref.item_enabled": "{gold}{0} {lime}(Wybrano)",
-  "k4.menu.weaponpref.item_disabled": "{gold}{0}",
+  "k4.menu.weaponpref.title": "Preferencje Broni",
+  "k4.menu.weaponpref.item_enabled": "{0} (Wybrano)",
+  "k4.menu.weaponpref.item_disabled": "{0}",
   "k4.chat.weapon_preferences_added": "{silver}Dodałeś {lime}{0}{silver} do swoich preferencji broni.",
 
   "k4.rounds.rifle": "Karabiny",
@@ -71,5 +71,6 @@
   "k4.chat.top_title": "{silver}Najlepsi gracze według Elo:",
   "k4.chat.top_entry": "{silver}{0}. {lime}{1}{silver}: {lime}{2}{silver} ({3}W {4}P {5}R)",
   "k4.chat.top_empty": "{silver}Brak rozegranych pojedynków.",
-  "k4.chat.top_self": "{silver}Twoje Elo: {lime}{0}"
+  "k4.chat.top_self": "{silver}Twoje Elo: {lime}{0}",
+  "k4.chat.no_menu_driver": "{silver}Menu wymaga wtyczki {lime}SharpModMenu{silver}, zapytaj administratora serwera."
 }

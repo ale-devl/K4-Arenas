@@ -51,6 +51,19 @@ jobs:
           dotnet publish src-plugin/K4-Arenas.csproj -c Release
           dotnet publish src-botsplugin/K4-Arenas-Bots.csproj -c Release
 
+      # The in-game menus need CSSUniversalMenuAPI plus a driver; ship pinned releases so one zip installs everything
+      - name: Bundle menu plugins
+        run: |
+          OUT=src-plugin/bin/K4-Arenas
+          bundle() { # repo tag zip folder-in-zip
+            gh release download "$2" --repo "CSGALS/$1" --pattern "$3" --dir menus
+            unzip -q -o "menus/$3" -d menus/out
+            gh api "repos/CSGALS/$1/contents/LICENSE?ref=$2" -H "Accept: application/vnd.github.raw" > "menus/out/addons/counterstrikesharp/$4/LICENSE"
+          }
+          bundle CSSUniversalMenuAPI v0.5.0 CSSUniversalMenuAPI.zip shared/CSSUniversalMenuAPI
+          bundle SharpModMenu v0.2.8 SharpModMenu.zip plugins/SharpModMenu
+          cp -r menus/out/addons/counterstrikesharp/. "$OUT/"
+
       - name: Test
         run: for test in tests/*.cs; do dotnet run "$test"; done
 
