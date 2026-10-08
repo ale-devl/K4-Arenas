@@ -1,3 +1,10 @@
+-- 2026.10.08 - 3.0.0-rc.1
+
+- release candidate: the first build published as a full GitHub release, so servers that install "latest" can get it
+- fix: Polish was missing the center-screen round announcement
+- fix (bots addon): the bot name prefix lost everything after the first space ("ARENA 3 |" became "ARENA")
+- test: every translation key the code uses must exist in every language file
+
 -- 2026.10.08 - 3.0.0-beta.2
 
 - breaking: renamed to alerena. Plugin folder, config (configs/plugins/alerena/alerena.json), database (alerena.db) and zips (alerena.zip, alerena-bots.zip) all use the new name; remove plugins/K4-Arenas, plugins/K4-Arenas-Bots and shared/K4-ArenaSharedApi before installing

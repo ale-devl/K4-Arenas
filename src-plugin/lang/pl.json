@@ -37,6 +37,7 @@
   "alerena.chat.round_preferences_removed": "{silver}Usunąłeś {lime}{0}{silver} ze swoich preferencji rundy.",
   "alerena.chat.round_preferences_atleastone": "{lightred}Nie możesz wyłączyć wszystkich rund. Przynajmniej jedna runda musi być włączona.",
   "alerena.chat.arena_roundstart": "{silver}Jesteś na arenie {lime}{0}{silver} przeciwko {lime}{1}{silver} i grasz rundę {lime}{2}{silver}.",
+  "alerena.chat.arena_roundstart_html": "<div class=\"fontSize-l\" style=\"text-align: center; padding: 10px;\"><font color=\"#C0C0C0\">Arena</font><br><font color=\"#FFA500\" class=\"fontSize-xl\">{0}</font><br><font color=\"#C0C0C0\">Typ rundy</font><br><font color=\"#FFA500\" class=\"fontSize-xl\">{1}</font><br><font color=\"#C0C0C0\" class=\"fontSize-m\">{2}</font></div>",
   "alerena.chat.arena_commands": "{silver}Możesz zmienić swoje preferencje za pomocą {lime}!{0}{silver} i {lime}!{1}{silver}.",
   "alerena.chat.arena_afk": "{silver}Możesz przejść do trybu AFK za pomocą {lime}!{0}{silver}.",
 

@@ -90,9 +90,9 @@ public class Plugin : BasePlugin
 				return HookResult.Continue;
 			}
 
-			var arenaS = SharedAPI_Arena?.GetArenaName(bots.First()) + " |" ?? "";
-
-			Server.ExecuteCommand($"bot_prefix {arenaS}");
+			// Quoted: arena names contain spaces ("ARENA 3"), unquoted only the first word would arrive
+			string arenaName = SharedAPI_Arena?.GetArenaName(bots.First()) ?? "";
+			Server.ExecuteCommand($"bot_prefix \"{(arenaName.Length > 0 ? arenaName + " |" : "")}\"");
 			return HookResult.Continue;
 		}, HookMode.Post);
 
