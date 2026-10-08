@@ -17,7 +17,7 @@ public class Arena
 	//** ? Arena Main Details */
 	public int ArenaID;
 	private int ArenaScore;
-	private RoundType RoundType;
+	private RoundType RoundType = null!; // assigned together with the teams
 	public readonly Tuple<List<SpawnPoint>, List<SpawnPoint>> Spawns;
 	public ArenaResult Result = new ArenaResult(ArenaResultType.Empty, null, null);
 
