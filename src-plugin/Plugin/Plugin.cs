@@ -19,6 +19,8 @@
         public required PluginConfig Config { get; set; } = new PluginConfig();
         public GameConfig? GameConfig { get; set; }
         public bool IsBetweenRounds = false;
+        public MatchHistory MatchHistory { get; } = new();
+        public bool UseRotation => !Config.Matchmaking.Equals("ladder", StringComparison.OrdinalIgnoreCase);
 
         public void OnConfigParsed(PluginConfig config)
         {
@@ -69,6 +71,9 @@
             }
 
             WarnUnknownKeys("the top level", config.UnknownKeys);
+
+            if (!new[] { "rotation", "ladder" }.Contains(config.Matchmaking, StringComparer.OrdinalIgnoreCase))
+                Logger.LogWarning("Config: matchmaking '{Mode}' is not 'rotation' or 'ladder', using rotation", config.Matchmaking);
             WarnUnknownKeys("database-settings", config.DatabaseSettings.UnknownKeys);
             WarnUnknownKeys("command-settings", config.CommandSettings.UnknownKeys);
             WarnUnknownKeys("compatibility-settings", config.CompatibilitySettings.UnknownKeys);
