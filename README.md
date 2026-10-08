@@ -1,87 +1,121 @@
-<a name="readme-top"></a>
+# K4-Arenas (friend-group fork)
 
-![GitHub tag (with filter)](https://img.shields.io/github/v/tag/KitsuneLab-Development/K4-Arenas?style=for-the-badge&label=Version)
-![GitHub Repo stars](https://img.shields.io/github/stars/KitsuneLab-Development/K4-Arenas?style=for-the-badge)
-![GitHub issues](https://img.shields.io/github/issues/KitsuneLab-Development/K4-Arenas?style=for-the-badge)
-![GitHub](https://img.shields.io/github/license/KitsuneLab-Development/K4-Arenas?style=for-the-badge)
-![GitHub all releases](https://img.shields.io/github/downloads/KitsuneLab-Development/K4-Arenas/total?style=for-the-badge)
-![GitHub last commit (branch)](https://img.shields.io/github/last-commit/KitsuneLab-Development/K4-Arenas/dev?style=for-the-badge)
+A 1v1 arena gamemode for Counter-Strike 2, built for a regular group of friends on a private server. Everyone faces everyone, a visible Elo gives you something to play for, and nothing needs an external service.
 
-<!-- PROJECT LOGO -->
-<br />
-<div align="center">
-  <a href="https://github.com/KitsuneLab-Development/K4-Arenas">
-    <img src="https://i.imgur.com/sej1ZzD.png" alt="Logo" width="400" height="256">
-  </a>
-  <h3 align="center">CounterStrike2 | K4-Arenas</h3>
-  <p align="center">
-    An all in one arena plugin, that you can use to have a ladder type gameplay. Support all map, 2v2/3v3/etc. Includes preferences, challenges and developer API for custom rounds.
-    <br />
-    <a href="https://github.com/KitsuneLab-Development/K4-Arenas/releases">Download</a>
-    ·
-    <a href="https://github.com/KitsuneLab-Development/K4-Arenas/issues/new?assignees=KitsuneLab-Development&labels=bug&template=bug_report.md&title=%5BBUG%5D">Report Bug</a>
-    ·
-    <a href="https://github.com/KitsuneLab-Development/K4-Arenas/issues/new?assignees=KitsuneLab-Development&labels=enhancement&template=feature_request.md&title=%5BREQ%5D">Request Feature</a>
-     ·
-    <a href="https://kitsune-lab.com">Website</a>
-     ·
-    <a href="https://nests.kitsune-lab.com/tickets/create?department_id=2">Hire Us</a>
-  </p>
-</div>
+This is a fork of [K4-Arenas](https://github.com/KitsuneLab-Development/K4-Arenas) by K4ryuu / KitsuneLab, which is archived. The roadmap and backlog live in [issue #10](https://github.com/ale-devl/K4-Arenas/issues/10).
 
-<!-- ABOUT THE PROJECT -->
+## Features
 
-### Dependencies
+- **Arenas on any map.** Spawn points are grouped into arenas automatically.
+- **Rotation matchmaking.** Each round you face the opponent you've met least this session, never the same one twice in a row when it can be avoided. With an odd player count, sitting out (or facing a bot) rotates fairly. The classic winner-up / loser-down ladder is still available.
+- **Elo, for show.** Shown on the scoreboard and after every duel (`Elo +14 → 1047`), with `!top` for the ranking. It never affects who you play against.
+- **Your loadout.** `!guns` picks your weapon per category, `!rounds` picks which round types you want.
+- **In-game settings.** `!arenaconfig` for admins: no JSON editing, no restart.
+- **Plugin-local storage.** One SQLite file next to the config, no database server.
+- 2v2 / 3v3 rounds, challenges (`!duel`), AFK handling, bot support, and a plugin API for custom rounds.
 
-Every important information about the plugin can be found in the [Wiki](https://github.com/KitsuneLab-Development/K4-Arenas/wiki).
+## Requirements
 
-To use this server addon, you'll need the following dependencies installed:
+- A CS2 dedicated server with [Metamod:Source](https://www.sourcemm.net/)
+- [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp/releases) **1.0.374 or newer**, using the `with-runtime` package (it brings .NET 10)
 
-- [**CounterStrikeSharp**](https://github.com/roflmuffin/CounterStrikeSharp/releases): CounterStrikeSharp allows you to write server plugins in C# for Counter-Strike 2/Source2/CS2.
+The menu plugins ([CSSUniversalMenuAPI](https://github.com/CSGALS/CSSUniversalMenuAPI) and [SharpModMenu](https://github.com/CSGALS/SharpModMenu)) are included in the release zip.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+## Install and update
 
-<!-- COMMUNITY -->
+1. Download `K4-Arenas.zip` from the [latest release](https://github.com/ale-devl/K4-Arenas/releases). `K4-Arenas-Bots.zip` is optional: it adds a bot to any arena where a player has no opponent.
+2. Extract it into `game/csgo/addons/counterstrikesharp/`.
+3. Restart the server.
 
-## Community Addons
+Updating works the same way. Your `K4-Arenas.json` and the database are never overwritten; only the template next to them is.
 
-The community has also created some addons which allows you to extend the functionality of K4-Arenas.
-Show you love to these fellow developers with a star on their repository! <3
+Versions: `3.0.0-alpha.N` and `-beta.N` are test builds, published as prereleases. `3.0.0` is the first release that has been tested on a live server.
 
-- [**K4-Arenas-Special-Rounds**](https://github.com/Letaryat/K4-Arenas-Special-Rounds): Only Headshot: AK47, Only Headshot: USP-S, Only Headshot: Scout, Only nade
+## Commands
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+| Command | What it does |
+|---|---|
+| `!guns` | Weapon preferences: pick a weapon per category, or Random |
+| `!rounds` | Turn round types on or off for yourself |
+| `!top`, `!elo` | Best 10 players by Elo, plus your own rating |
+| `!duel <name>`, `!challenge <name>` | Challenge a player to a 1v1 next round |
+| `!caccept`, `!cdecline` | Answer a challenge |
+| `!afk` | Sit out until you use it again |
+| `!queue` | Your position in the waiting queue |
+| `!arenaconfig` | Admins (`@css/config`): arena settings menu |
 
-<!-- ROADMAP -->
+All command names can be changed in `command-settings`.
 
-## Roadmap
+**Menu controls (SharpModMenu):** W/S move, E select, A back, R exit. You can't move while a menu is open. If you bind `bind 1 "slot1;css_1"` up to `bind 0 "slot0;css_0"`, you get classic number-key menus instead.
 
-- [ ] No plans for now
+## How matches are made
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+- **Rotation (default):** players are paired with whoever they've faced least since the server was last empty. With 6 players, 5 rounds are usually a complete round-robin.
+- **Ladder:** the original K4-Arenas system. Arena 1 is the top; winners move up an arena, losers move down.
+- **Round type:** picked at random from the rounds both players have enabled. If they share none, the `default-round` is used.
 
-<!-- AUTHORS -->
+**Elo** starts at 1000 with a K-factor of 32 (both configurable):
+- Beating a stronger player earns more.
+- A draw counts as half a win.
+- Team rounds compare team averages.
+- Challenges count. Warmup, bots and sitting out don't.
 
-## Authors
+## Configuration
 
-- [**K4ryuu**](https://github.com/K4ryuu) - _Initial work_
+| File | Purpose |
+|---|---|
+| `addons/counterstrikesharp/configs/plugins/K4-Arenas/K4-Arenas.json` | Plugin settings |
+| `.../configs/plugins/K4-Arenas/K4-Arenas.example.json` | Template, copied to `K4-Arenas.json` when that file doesn't exist |
+| `.../configs/plugins/K4-Arenas/k4-arenas.db` | Player preferences and Elo |
+| `.../plugins/K4-Arenas/gameconfig.cfg` | Server cvars applied at every map start |
 
-See also the list of [contributors](https://github.com/KitsuneLab-Development/K4-Arenas/graphs/contributors) who participated in this project as an outside contributor.
+**Behavior:**
+- **To start over,** delete `K4-Arenas.json` and restart. It's recreated from the template.
+- **Missing keys** fall back to built-in defaults.
+- **At startup,** the console names every key or value that is ignored (typos, unknown weapons) and logs which config folder was loaded.
+- **The config folder is named after the plugin folder.** Renaming `plugins/K4-Arenas` also changes where the config is read from.
+- **A `K4-Arenas.toml`** in the same folder takes priority over the `.json`.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+**Format gotchas:**
+- Entries inside `round-settings` use **PascalCase** keys (`TranslationName`, `PrimaryWeapon`). Everything else uses kebab-case.
+- Weapons need the `weapon_` prefix: `weapon_ak47`, `weapon_awp`, `weapon_usp_silencer`.
+- A round with `"PrimaryWeapon": null` and `"UsePreferredPrimary": true` gives each player their own choice from `!guns`. If they haven't picked one, they get the matching `default-*` weapon. A fixed `PrimaryWeapon` always overrides the player's choice.
+- When `use-predefined-config` is on, `gameconfig.cfg` re-applies its cvars at every map start. Put `mp_*` changes there, not in `server.cfg`.
 
-<!-- LICENSE -->
+### Settings
 
-## License
+| Key | Default | Meaning |
+|---|---|---|
+| `matchmaking` | `rotation` | `rotation` or `ladder` |
+| `use-predefined-config` | `true` | Apply `gameconfig.cfg` at every map start |
+| `database-settings.table-purge-days` | `0` | Delete players not seen for this many days. `0` keeps them forever |
+| `round-settings` | 12 rounds | Round types. Per entry: `TranslationName`, `TeamSize`, `PrimaryWeapon`, `SecondaryWeapon`, `UsePreferredPrimary`, `PrimaryPreference` (`Rifle`, `Sniper`, `SMG`, `LMG`, `Shotgun`, `Pistol`, or `Unknown` = random), `UsePreferredSecondary`, `Armor`, `Helmet`, `EnabledByDefault` |
+| `default-weapon-settings.default-*` | template: AK-47, AWP, Deagle | Weapon used until a player picks one. `null` = random |
+| `default-weapon-settings.default-round` | `k4.rounds.rifle` | Round used when two players share no enabled round |
+| `elo-settings.k-factor` / `start-rating` | `32` / `1000` | Elo tuning |
+| `compatibility-settings.prevent-draw-rounds` | `true` | Pick a random winning team instead of a draw when alive counts are equal |
+| `compatibility-settings.block-damage-of-not-opponent` | template: `true` | Undo damage from other arenas. A single lethal hit still kills |
+| `compatibility-settings.block-flash-of-not-opponent` | template: `true` | Ignore flashes from other arenas |
+| `compatibility-settings.give-knife-by-default` | `true` | Everyone gets a knife |
+| `compatibility-settings.force-arena-clantags` | `false` | Re-apply the arena clan tag every second, for when another plugin overwrites it |
+| `compatibility-settings.disable-clantags` | `false` | Never touch players' clan tags |
+| `allowed-weapon-prefs.*` | `true` | Which categories appear in `!guns` |
+| `command-settings.*` | see Commands | Command names. `center-announce-mode` announces arena, opponent and round type at round start (center screen and chat); `false` turns the announcement off |
 
-Distributed under the GPL-3.0 License. See `LICENSE.md` for more information.
+## Development
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+```sh
+dotnet publish src-plugin/K4-Arenas.csproj -c Release   # → src-plugin/bin/K4-Arenas/
+dotnet run tests/ConfigParsing.cs                       # each tests/*.cs is a standalone check
+```
 
-<!-- CONTACT -->
+You need the .NET 10 SDK. Every pull request is built by CI. CI runs all `tests/*.cs`, bundles the menu plugins, and publishes a prerelease named after the plugin version (`ModuleVersion` in `src-plugin/Plugin/PluginManifest.cs`), so bump that version in every PR.
 
-## Contact
+Other plugins can add round types and query arena state through the shared API (`src-shared/K4-ArenaSharedApi.cs`, capability `k4-arenas:sharedapi`). `src-plugin/K4-Arenas-Example.cs` shows a custom round.
 
-- **KitsuneLab Team** - [contact@kitsune-lab.com](mailto:contact@kitsune-lab.com)
+## Credits and license
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+- Original plugin: [K4ryuu / KitsuneLab](https://github.com/KitsuneLab-Development/K4-Arenas), with community contributors.
+- Menus: CSSUniversalMenuAPI and SharpModMenu by [CS:GALS](https://github.com/CSGALS) (MIT, licenses included in the release).
+
+Distributed under the GPL-3.0 license. See [`LICENSE.md`](LICENSE.md).

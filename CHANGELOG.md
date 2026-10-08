@@ -1,3 +1,18 @@
+-- 2026.10.08 - 3.0.0-beta.1 (fork: ale-devl/K4-Arenas)
+
+- breaking: requires CounterStrikeSharp 1.0.374+ (.NET 10)
+- breaking: MySQL replaced by a plugin-local SQLite file (configs/plugins/K4-Arenas/k4-arenas.db); database-settings keeps only table-purge-days
+- breaking: removed center-menu-mode, freeze-in-center-menu and show-menu-credits (KitsuneMenu is gone)
+- feat: rotation matchmaking is the default (least-met opponents, fair sit-outs); "matchmaking": "ladder" keeps the old system
+- feat: display-only Elo on the scoreboard, a chat line after each duel, !top / !elo
+- feat: !guns and !rounds through CSSUniversalMenuAPI; SharpModMenu is bundled in the release
+- feat: !arenaconfig admin settings menu, saved to the config and applied live
+- feat: K4-Arenas.example.json template; startup warnings for ignored keys and values
+- fix: EnabledByDefault rounds and default weapons were ignored without a database
+- fix: blank rounds (no weapons) from stale preferences or an unknown default-round
+- fix: round preferences got mixed up after reordering round-settings
+- fix: rounds added through the API were lost on a config reload, and round IDs were reused
+
 -- 2025.08.05 - 2.0.8
 
 - feat: Added API function to get weapon preferences for a player for a given weapon type (#50)
