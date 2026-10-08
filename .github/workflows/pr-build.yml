@@ -1,0 +1,53 @@
+# Builds every PR and publishes a test prerelease "pr-<number>" with install zips.
+# Each new push to the PR replaces that release.
+name: PR build
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Build the PR head itself (not GitHub's merge commit) so the release matches its tag
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Publish
+        run: |
+          dotnet publish src-plugin/K4-Arenas.csproj -c Release
+          dotnet publish src-botsplugin/K4-Arenas-Bots.csproj -c Release
+
+      - name: Zip
+        run: |
+          (cd src-plugin/bin/K4-Arenas && zip -qr "$GITHUB_WORKSPACE/K4-Arenas.zip" .)
+          (cd src-botsplugin/bin/K4-Arenas-Bots && zip -qr "$GITHUB_WORKSPACE/K4-Arenas-Bots.zip" .)
+
+      - name: Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          TAG="pr-$PR"
+          gh release delete "$TAG" --cleanup-tag --yes || true
+          gh release create "$TAG" K4-Arenas.zip K4-Arenas-Bots.zip \
+            --prerelease --target "$SHA" \
+            --title "PR #$PR: $PR_TITLE" \
+            --notes "Test build of ${SHA::7} from #$PR.
+
+          Extract into \`addons/counterstrikesharp/\` on the server. K4-Arenas-Bots.zip is optional."
