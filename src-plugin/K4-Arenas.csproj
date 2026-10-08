@@ -27,6 +27,8 @@
   </ItemGroup>
   <Target Name="CopyCustomFilesToPublishDirectory" AfterTargets="Publish">
     <Copy SourceFiles="$(ProjectDir)readme.txt" DestinationFolder="$(PublishDir)\" />
+    <!-- CounterStrikeSharp copies this to K4-Arenas.json when no config exists yet -->
+    <Copy SourceFiles="$(ProjectDir)K4-Arenas.example.json" DestinationFolder="$(PublishDir)../../configs/plugins/K4-Arenas/" />
     <Copy SourceFiles="$(ProjectDir)../src-shared/bin/$(Configuration)/$(TargetFramework)/K4-ArenaSharedApi.dll" DestinationFolder="$(PublishDir)../../shared/K4-ArenaSharedApi/" />
   </Target>
 </Project>

@@ -51,9 +51,24 @@ Check("old numeric weapon type still parses", config.RoundSettings[0].PrimaryPre
 Check("weapon type by name parses", config.RoundSettings[1].PrimaryPreference == WeaponType.Sniper);
 Check("round without TranslationName parses (validator skips it)", config.RoundSettings[2].TranslationName == "");
 
+// The shipped template (src-plugin/K4-Arenas.example.json) must parse with no ignored keys or weapons
+string templatePath = Path.Combine(Path.GetDirectoryName(SourceFile())!, "..", "src-plugin", "K4-Arenas.example.json");
+PluginConfig template = JsonSerializer.Deserialize<PluginConfig>(File.ReadAllText(templatePath), options)!;
+Check("template has no unknown keys", new[] { template.UnknownKeys, template.DatabaseSettings.UnknownKeys, template.CommandSettings.UnknownKeys,
+	template.CompatibilitySettings.UnknownKeys, template.DefaultWeaponSettings.UnknownKeys, template.AllowedWeaponPreferences.UnknownKeys }
+	.Concat(template.RoundSettings.Select(r => r.UnknownKeys)).All(keys => keys is null));
+DefaultWeaponSettings dws = template.DefaultWeaponSettings;
+Check("template weapons are all known", template.RoundSettings.SelectMany(r => new[] { r.PrimaryWeapon, r.SecondaryWeapon })
+	.Concat([dws.DefaultRifle, dws.DefaultSniper, dws.DefaultSMG, dws.DefaultLMG, dws.DefaultShotgun, dws.DefaultPistol])
+	.All(w => w is null || RoundType.FindEnumValueByEnumMemberValue(w) != null));
+Check("template rounds all have a TranslationName", template.RoundSettings.All(r => !string.IsNullOrWhiteSpace(r.TranslationName)));
+Check("template default-round matches a round", template.RoundSettings.Any(r => r.TranslationName == dws.DefaultRound));
+
 // Weapon name lookup the validator relies on
 Check("weapon_ak47 is a known weapon", RoundType.FindEnumValueByEnumMemberValue("weapon_ak47") != null);
 Check("awp without prefix is unknown", RoundType.FindEnumValueByEnumMemberValue("awp") == null);
 
 Console.WriteLine(failures == 0 ? "All checks passed" : $"{failures} check(s) failed");
 return failures == 0 ? 0 : 1;
+
+static string SourceFile([System.Runtime.CompilerServices.CallerFilePath] string path = "") => path;
