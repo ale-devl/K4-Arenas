@@ -255,6 +255,13 @@ namespace K4Arenas
 			"cdeny"
 		];
 
+		// Opens the in-game settings menu, needs the @css/config permission
+		[JsonPropertyName("admin-commands")]
+		public List<string> AdminCommands { get; set; } =
+		[
+			"arenaconfig"
+		];
+
 		[JsonPropertyName("top-commands")]
 		public List<string> TopCommands { get; set; } =
 		[

@@ -33,7 +33,21 @@
 
             ValidateConfig(config);
 
-            //** ? Load Round Types */
+            ApplyRoundSettings(config);
+
+            string? defaultRound = config.DefaultWeaponSettings.DefaultRound;
+            if (!string.IsNullOrEmpty(defaultRound) && !RoundType.RoundTypes.Any(rt => rt.Name == defaultRound))
+                Logger.LogWarning("Config: default-round '{Round}' matches no round in round-settings", defaultRound);
+
+            Logger.LogInformation("Config loaded from configs/plugins/{Folder}/ with {Count} round type(s)", Path.GetFileName(ModuleDirectory), RoundType.RoundTypes.Count);
+
+            this.Config = config;
+        }
+
+        // Rebuilds the round list from config; rounds added by other plugins through the API are kept
+        public static void ApplyRoundSettings(PluginConfig config)
+        {
+            List<RoundType> apiRounds = [.. RoundType.RoundTypes.Where(r => r.StartFunction != null)];
 
             if (config.RoundSettings.Count > 0)
             {
@@ -46,13 +60,7 @@
             else
                 RoundType.ResetRoundTypes();
 
-            string? defaultRound = config.DefaultWeaponSettings.DefaultRound;
-            if (!string.IsNullOrEmpty(defaultRound) && !RoundType.RoundTypes.Any(rt => rt.Name == defaultRound))
-                Logger.LogWarning("Config: default-round '{Round}' matches no round in round-settings", defaultRound);
-
-            Logger.LogInformation("Config loaded from configs/plugins/{Folder}/ with {Count} round type(s)", Path.GetFileName(ModuleDirectory), RoundType.RoundTypes.Count);
-
-            this.Config = config;
+            RoundType.RoundTypes.AddRange(apiRounds.Where(r => !RoundType.RoundTypes.Contains(r)));
         }
 
         // Values that parse fine but would be silently ignored get a warning naming the field
