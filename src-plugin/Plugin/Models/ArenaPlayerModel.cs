@@ -4,11 +4,9 @@ using CounterStrikeSharp.API.Core.Translations;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Menu;
 using CounterStrikeSharp.API.Modules.Utils;
-using Dapper;
 using K4ArenaSharedApi;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
-using MySqlConnector;
 
 namespace K4Arenas.Models;
 
@@ -31,10 +29,33 @@ public class ArenaPlayer
 
 	//** ? Settings */
 	public bool AFK = false;
-	public Dictionary<WeaponType, CsItem?> WeaponPreferences;
 
-	// Config defaults; saved preferences replace these once loaded from the database
-	public List<RoundType> RoundPreferences = [.. RoundType.RoundTypes.Where(r => r.EnabledByDefault)];
+	// Only what the player explicitly picked (loaded from the database); everything else follows the config.
+	// A null weapon means the player picked "Random".
+	public Dictionary<WeaponType, CsItem?> WeaponChoices = [];
+	public Dictionary<string, bool> RoundChoices = [];
+
+	public List<RoundType> RoundPreferences
+		=> [.. RoundType.RoundTypes.Where(r => RoundChoices.TryGetValue(r.Name, out bool enabled) ? enabled : r.EnabledByDefault)];
+
+	// The player's weapon for a type: their choice, else the config default; null = random
+	public CsItem? GetWeaponPreference(WeaponType weaponType)
+	{
+		if (WeaponChoices.TryGetValue(weaponType, out CsItem? choice))
+			return choice;
+
+		DefaultWeaponSettings dws = Plugin.Config.DefaultWeaponSettings;
+		return Plugin.FindEnumValueByEnumMemberValue(weaponType switch
+		{
+			WeaponType.Rifle => dws.DefaultRifle,
+			WeaponType.Sniper => dws.DefaultSniper,
+			WeaponType.SMG => dws.DefaultSMG,
+			WeaponType.LMG => dws.DefaultLMG,
+			WeaponType.Shotgun => dws.DefaultShotgun,
+			WeaponType.Pistol => dws.DefaultPistol,
+			_ => null
+		});
+	}
 
 	public ArenaPlayer(Plugin plugin, CCSPlayerController playerController)
 	{
@@ -45,17 +66,6 @@ public class ArenaPlayer
 		Controller = playerController;
 		SteamID = playerController.SteamID;
 		PlayerIsSafe = playerController.IsBot;
-
-		DefaultWeaponSettings dws = Config.DefaultWeaponSettings;
-		WeaponPreferences = new Dictionary<WeaponType, CsItem?>
-		{
-			{ WeaponType.Rifle, Plugin.FindEnumValueByEnumMemberValue(dws.DefaultRifle) },
-			{ WeaponType.Sniper, Plugin.FindEnumValueByEnumMemberValue(dws.DefaultSniper) },
-			{ WeaponType.SMG, Plugin.FindEnumValueByEnumMemberValue(dws.DefaultSMG) },
-			{ WeaponType.LMG, Plugin.FindEnumValueByEnumMemberValue(dws.DefaultLMG) },
-			{ WeaponType.Shotgun, Plugin.FindEnumValueByEnumMemberValue(dws.DefaultShotgun) },
-			{ WeaponType.Pistol, Plugin.FindEnumValueByEnumMemberValue(dws.DefaultPistol) }
-		};
 	}
 
 	public bool IsValid
@@ -88,10 +98,10 @@ public class ArenaPlayer
 			{
 				Controller.GiveNamedItem((CsItem)roundType.PrimaryWeapon);
 			}
-			else if (roundType.UsePreferredPrimary && roundType.PrimaryPreference != null && WeaponPreferences != null)
+			else if (roundType.UsePreferredPrimary && roundType.PrimaryPreference != null)
 			{
 				WeaponType primaryPreferenceType = (WeaponType)roundType.PrimaryPreference;
-				CsItem? primaryPreference = WeaponPreferences.GetValueOrDefault(primaryPreferenceType) ?? WeaponModel.GetRandomWeapon(primaryPreferenceType);
+				CsItem? primaryPreference = GetWeaponPreference(primaryPreferenceType) ?? WeaponModel.GetRandomWeapon(primaryPreferenceType);
 				Controller.GiveNamedItem((CsItem)primaryPreference);
 			}
 
@@ -99,9 +109,9 @@ public class ArenaPlayer
 			{
 				Controller.GiveNamedItem((CsItem)roundType.SecondaryWeapon);
 			}
-			else if (roundType.UsePreferredSecondary && WeaponPreferences != null)
+			else if (roundType.UsePreferredSecondary)
 			{
-				CsItem? secondaryPreference = WeaponPreferences.GetValueOrDefault(WeaponType.Pistol) ?? WeaponModel.GetRandomWeapon(WeaponType.Pistol);
+				CsItem? secondaryPreference = GetWeaponPreference(WeaponType.Pistol) ?? WeaponModel.GetRandomWeapon(WeaponType.Pistol);
 				Controller.GiveNamedItem((CsItem)secondaryPreference);
 			}
 		}
@@ -154,7 +164,7 @@ public class ArenaPlayer
 				(player, option) =>
 				{
 					ToggleRoundPreference(roundType);
-					Task.Run(SavePlayerPreferencesAsync);
+					Plugin.SavePlayer(this);
 				}
 			);
 		}
@@ -173,13 +183,13 @@ public class ArenaPlayer
 			}
 			else
 			{
-				RoundPreferences.Remove(roundType);
+				RoundChoices[roundType.Name] = false;
 				Controller.PrintToChat($" {Localizer.ForPlayer(Controller, "k4.general.prefix")} {Localizer.ForPlayer(Controller, "k4.chat.round_preferences_removed", Localizer.ForPlayer(Controller, roundType.Name))}");
 			}
 		}
 		else
 		{
-			RoundPreferences.Add(roundType);
+			RoundChoices[roundType.Name] = true;
 			Controller.PrintToChat($" {Localizer.ForPlayer(Controller, "k4.general.prefix")} {Localizer.ForPlayer(Controller, "k4.chat.round_preferences_added", Localizer.ForPlayer(Controller, roundType.Name))}");
 		}
 	}
@@ -234,11 +244,11 @@ public class ArenaPlayer
 
 	private void AddWeaponOptions(ChatMenu menu, WeaponType weaponType)
 	{
-		menu.AddMenuOption(WeaponPreferences[weaponType] is null ? Localizer.ForPlayer(Controller, "k4.menu.weaponpref.item_enabled", Localizer.ForPlayer(Controller, "k4.general.random")) : Localizer.ForPlayer(Controller, "k4.menu.weaponpref.item_disabled", Localizer.ForPlayer(Controller, "k4.general.random")),
+		menu.AddMenuOption(GetWeaponPreference(weaponType) is null ? Localizer.ForPlayer(Controller, "k4.menu.weaponpref.item_enabled", Localizer.ForPlayer(Controller, "k4.general.random")) : Localizer.ForPlayer(Controller, "k4.menu.weaponpref.item_disabled", Localizer.ForPlayer(Controller, "k4.general.random")),
 			(player, option) =>
 			{
 				SetWeaponPreference(weaponType, null);
-				Task.Run(SavePlayerPreferencesAsync);
+				Plugin.SavePlayer(this);
 			}
 		);
 
@@ -248,12 +258,12 @@ public class ArenaPlayer
 			if (WeaponModel.GetWeaponType(item) != weaponType)
 				continue;
 
-			bool isItemEnabled = WeaponPreferences[weaponType] == item;
+			bool isItemEnabled = GetWeaponPreference(weaponType) == item;
 			menu.AddMenuOption(isItemEnabled ? Localizer.ForPlayer(Controller, "k4.menu.weaponpref.item_enabled", Localizer.ForPlayer(Controller, item.ToString())) : Localizer.ForPlayer(Controller, "k4.menu.weaponpref.item_disabled", Localizer.ForPlayer(Controller, item.ToString())),
 				(player, option) =>
 				{
 					SetWeaponPreference(weaponType, item);
-					Task.Run(SavePlayerPreferencesAsync);
+					Plugin.SavePlayer(this);
 				}
 			);
 		}
@@ -261,43 +271,7 @@ public class ArenaPlayer
 
 	private void SetWeaponPreference(WeaponType weaponType, CsItem? item)
 	{
-		WeaponPreferences[weaponType] = item;
+		WeaponChoices[weaponType] = item;
 		Controller.PrintToChat($" {Localizer.ForPlayer(Controller, "k4.general.prefix")} {Localizer.ForPlayer(Controller, "k4.chat.weapon_preferences_added", Localizer.ForPlayer(Controller, item?.ToString() ?? "k4.general.random"))}");
-	}
-
-	public async Task SavePlayerPreferencesAsync()
-	{
-		if (!Loaded)
-			return;
-
-		using MySqlConnection connection = Plugin.CreateConnection(Config);
-		await connection.OpenAsync();
-
-		try
-		{
-			string sqlUpdate = $@"
-				UPDATE `{Config.DatabaseSettings.TablePrefix}k4-arenas`
-				SET `rifle` = @Rifle, `sniper` = @Sniper, `shotgun` = @Shotgun, `smg` = @SMG, `lmg` = @LMG, `pistol` = @Pistol, `rounds` = @Rounds
-				WHERE `steamid64` = @SteamId;";
-
-			var weaponParameters = new
-			{
-				SteamId = SteamID,
-				Rifle = WeaponPreferences.TryGetValue(WeaponType.Rifle, out CsItem? rifle) ? rifle : null,
-				Sniper = WeaponPreferences.TryGetValue(WeaponType.Sniper, out CsItem? sniper) ? sniper : null,
-				Shotgun = WeaponPreferences.TryGetValue(WeaponType.Shotgun, out CsItem? shotgun) ? shotgun : null,
-				SMG = WeaponPreferences.TryGetValue(WeaponType.SMG, out CsItem? smg) ? smg : null,
-				LMG = WeaponPreferences.TryGetValue(WeaponType.LMG, out CsItem? lmg) ? lmg : null,
-				Pistol = WeaponPreferences.TryGetValue(WeaponType.Pistol, out CsItem? pistol) ? pistol : null,
-				Rounds = string.Join(",", RoundPreferences.Select(r => r.ID))
-			};
-
-			await connection.ExecuteAsync(sqlUpdate, weaponParameters);
-		}
-		catch (Exception ex)
-		{
-			Plugin.Logger.LogError("Failed to save player preferences: {0}", ex.Message);
-			throw;
-		}
 	}
 }

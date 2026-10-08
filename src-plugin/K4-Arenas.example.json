@@ -3,13 +3,6 @@
 {
   "use-predefined-config": true,
   "database-settings": {
-    "host": "localhost",
-    "username": "root",
-    "database": "database",
-    "password": "password",
-    "port": 3306,
-    "sslmode": "preferred",
-    "table-prefix": "",
     "table-purge-days": 0
   },
   "command-settings": {
