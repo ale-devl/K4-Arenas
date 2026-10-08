@@ -64,5 +64,12 @@
   "k4.rounds.deagle": "Tylko Deagle",
   "k4.rounds.knife": "Runda Nożowa",
   "k4.rounds.2vs2": "2vs2",
-  "k4.rounds.3vs3": "3vs3"
+  "k4.rounds.3vs3": "3vs3",
+
+  "k4.chat.elo_gain": "{silver}Elo {lime}+{0}{silver} → {lime}{1}",
+  "k4.chat.elo_loss": "{silver}Elo {red}-{0}{silver} → {lime}{1}",
+  "k4.chat.top_title": "{silver}Najlepsi gracze według Elo:",
+  "k4.chat.top_entry": "{silver}{0}. {lime}{1}{silver}: {lime}{2}{silver} ({3}W {4}P {5}R)",
+  "k4.chat.top_empty": "{silver}Brak rozegranych pojedynków.",
+  "k4.chat.top_self": "{silver}Twoje Elo: {lime}{0}"
 }

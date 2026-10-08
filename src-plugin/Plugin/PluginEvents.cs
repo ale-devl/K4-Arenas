@@ -348,12 +348,12 @@ namespace K4Arenas
 
 						RoundType roundType = GetCommonRoundType(player1.RoundPreferences, player2?.RoundPreferences, false);
 
-						Arenas.ArenaList[arenaID].AddPlayers([player1], player2 != null ? [player2] : null, roundType, displayIndex, (Arenas.Count - displayIndex) * 50);
+						Arenas.ArenaList[arenaID].AddPlayers([player1], player2 != null ? [player2] : null, roundType, displayIndex);
 						displayIndex++;
 					}
 					else
 					{
-						Arenas.ArenaList[arenaID].AddPlayers(null, null, null, displayIndex, (Arenas.Count - displayIndex) * 50);
+						Arenas.ArenaList[arenaID].AddPlayers(null, null, null, displayIndex);
 						displayIndex++;
 					}
 				}
@@ -408,6 +408,10 @@ namespace K4Arenas
 
 				foreach (Arena arena in Arenas.ArenaList)
 					arena.OnRoundEnd();
+
+				if (gameRules?.WarmupPeriod != true)
+					foreach (Arena arena in Arenas.ArenaList)
+						ApplyElo(arena);
 
 				return HookResult.Continue;
 			});

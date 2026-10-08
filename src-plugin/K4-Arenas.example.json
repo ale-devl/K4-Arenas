@@ -34,6 +34,10 @@
       "cdecline",
       "cdeny"
     ],
+    "top-commands": [
+      "top",
+      "elo"
+    ],
     "center-announce-mode": true
   },
   "round-settings": [
@@ -189,6 +193,10 @@
     "give-knife-by-default": true,
     "disable-clantags": false,
     "prevent-draw-rounds": true
+  },
+  "elo-settings": {
+    "k-factor": 32,
+    "start-rating": 1000
   },
   "default-weapon-settings": {
     "default-rifle": "weapon_ak47",
