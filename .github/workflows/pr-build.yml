@@ -68,10 +68,11 @@ jobs:
       - name: Test
         run: for test in tests/*.cs; do dotnet run "$test"; done
 
+      # One package: the bots addon is part of the gamemode (an odd player out gets a bot)
       - name: Zip
         run: |
+          cp -r src-botsplugin/bin/alerena-bots/. src-plugin/bin/alerena/
           (cd src-plugin/bin/alerena && zip -qr "$GITHUB_WORKSPACE/alerena.zip" .)
-          (cd src-botsplugin/bin/alerena-bots && zip -qr "$GITHUB_WORKSPACE/alerena-bots.zip" .)
 
       - name: Release
         env:
@@ -79,10 +80,10 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           gh release delete "$TAG" --cleanup-tag --yes 2>/dev/null || true
-          gh release create "$TAG" alerena.zip alerena-bots.zip \
+          gh release create "$TAG" alerena.zip \
             --prerelease --target "$SHA" \
             --title "$TAG: $PR_TITLE" \
-            --notes "Extract into \`addons/counterstrikesharp/\` on the server. alerena-bots.zip is optional.
+            --notes "Extract into \`addons/counterstrikesharp/\` on the server.
 
           Test build of ${SHA::7} from #$PR."
 

@@ -16,7 +16,7 @@ chat      [alerena] Elo +14 → 1047
 - **Elo, just for show.** It's on the scoreboard and in chat after every duel, and `!top` shows the ranking. It never changes who you play.
 - **Your loadout.** `!guns` sets your weapon per category, `!rounds` picks which round types you want.
 - **Settings in-game.** Admins use `!arenaconfig`: no file editing, no restart.
-- **Works on any map.** Spawn points are grouped into arenas automatically. Also included: 2v2 / 3v3 rounds, `!duel` challenges, AFK handling, optional bots.
+- **Works on any map.** Spawn points are grouped into arenas automatically. Also included: 2v2 / 3v3 rounds, `!duel` challenges, AFK handling, and a bot for whoever has no opponent.
 
 ## Install
 
@@ -26,7 +26,7 @@ You need a CS2 dedicated server with [Metamod:Source](https://www.sourcemm.net/)
 2. Extract it into `game/csgo/addons/counterstrikesharp/`
 3. Restart the server
 
-That's all: the menu plugins ([CSSUniversalMenuAPI](https://github.com/CSGALS/CSSUniversalMenuAPI) and [SharpModMenu](https://github.com/CSGALS/SharpModMenu)) are in the zip. `alerena-bots.zip` is optional: it gives a bot to anyone without an opponent.
+That's all: the menu plugins ([CSSUniversalMenuAPI](https://github.com/CSGALS/CSSUniversalMenuAPI) and [SharpModMenu](https://github.com/CSGALS/SharpModMenu)) are in the zip, and so is the bots addon: with an odd player count, whoever has no opponent gets a bot. With an even count it does nothing.
 
 **Updating:** extract the new zip over the old one. Your `alerena.json` and `alerena.db` are never touched.
 

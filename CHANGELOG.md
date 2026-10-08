@@ -1,3 +1,7 @@
+-- 2026.10.08 - 3.0.0-rc.2
+
+- the bots addon ships inside alerena.zip; alerena-bots.zip is gone
+
 -- 2026.10.08 - 3.0.0-rc.1
 
 - release candidate: the first build published as a full GitHub release, so servers that install "latest" can get it
