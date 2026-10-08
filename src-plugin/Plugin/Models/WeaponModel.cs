@@ -1,7 +1,7 @@
 using CounterStrikeSharp.API.Modules.Entities.Constants;
-using K4ArenaSharedApi;
+using AlerenaApi;
 
-namespace K4Arenas.Models;
+namespace Alerena.Models;
 
 public struct WeaponModel
 {

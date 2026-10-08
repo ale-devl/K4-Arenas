@@ -2,11 +2,11 @@ using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Translations;
 using CounterStrikeSharp.API.Modules.Utils;
-using K4ArenaSharedApi;
+using AlerenaApi;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
-namespace K4Arenas.Models;
+namespace Alerena.Models;
 
 public class Arena
 {
@@ -190,10 +190,10 @@ public class Arena
 							{
 								var arenaName = Plugin.GetRequiredArenaName(ArenaID);
 								var opponentNames = Plugin.GetOpponentNames(player.Controller, opponents) ?? "Unknown";
-								var roundName = ArenaID == -1 ? Localizer.ForPlayer(player.Controller, "k4.general.random") : Localizer.ForPlayer(player.Controller, RoundType.Name ?? "Missing");
+								var roundName = ArenaID == -1 ? Localizer.ForPlayer(player.Controller, "alerena.general.random") : Localizer.ForPlayer(player.Controller, RoundType.Name ?? "Missing");
 
-								player.CenterMessage = Localizer.ForPlayer(player.Controller, "k4.chat.arena_roundstart_html", arenaName, roundName, opponentNames);
-								player.Controller.PrintToChat($" {Localizer.ForPlayer(player.Controller, "k4.general.prefix")} {Localizer.ForPlayer(player.Controller, "k4.chat.arena_roundstart", arenaName, opponentNames, roundName, opponentNames)}");
+								player.CenterMessage = Localizer.ForPlayer(player.Controller, "alerena.chat.arena_roundstart_html", arenaName, roundName, opponentNames);
+								player.Controller.PrintToChat($" {Localizer.ForPlayer(player.Controller, "alerena.general.prefix")} {Localizer.ForPlayer(player.Controller, "alerena.chat.arena_roundstart", arenaName, opponentNames, roundName, opponentNames)}");
 							}
 					});
 				}
@@ -285,7 +285,7 @@ public class Arena
 				{
 					if (ArenaID == -2)
 					{
-						Plugin.PrintToChatAll("k4.general.challenge.tie", Team1.First().Controller.PlayerName, Team2.First().Controller.PlayerName);
+						Plugin.PrintToChatAll("alerena.general.challenge.tie", Team1.First().Controller.PlayerName, Team2.First().Controller.PlayerName);
 
 						Team1.Concat(Team2).ToList().ForEach(p =>
 						{
@@ -311,7 +311,7 @@ public class Arena
 
 					if (ArenaID == -2)
 					{
-						Plugin.PrintToChatAll("k4.general.challenge.winner", winners[0].Controller.PlayerName, losers[0].Controller.PlayerName);
+						Plugin.PrintToChatAll("alerena.general.challenge.winner", winners[0].Controller.PlayerName, losers[0].Controller.PlayerName);
 
 						Team1.Concat(Team2).ToList().ForEach(p =>
 						{

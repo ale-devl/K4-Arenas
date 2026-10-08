@@ -2,7 +2,7 @@
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <DebugSymbols>False</DebugSymbols>
     <DebugType>None</DebugType>
-    <PublishDir>./bin/K4-Arenas/plugins/K4-Arenas/</PublishDir>
+    <PublishDir>./bin/alerena/plugins/alerena/</PublishDir>
   </PropertyGroup>
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -19,23 +19,23 @@
     <!-- Provided on the server by shared/CSSUniversalMenuAPI (bundled in the release zip) -->
     <PackageReference Include="CSSUniversalMenuAPI" Version="0.5.0" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.12" />
-    <ProjectReference Include="../src-shared/K4-ArenaSharedApi.csproj">
+    <ProjectReference Include="../src-shared/alerena-api.csproj">
       <Private>false</Private>
     </ProjectReference>
     <!-- Template for addon authors, not part of this plugin -->
-    <Compile Remove="K4-Arenas-Example.cs" />
+    <Compile Remove="AddonExample.cs" />
     <None Update="lang\**\*.*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <Target Name="CopyCustomFilesToPublishDirectory" AfterTargets="Publish">
     <Copy SourceFiles="$(ProjectDir)readme.txt" DestinationFolder="$(PublishDir)\" />
-    <!-- CounterStrikeSharp copies this to K4-Arenas.json when no config exists yet -->
-    <Copy SourceFiles="$(ProjectDir)K4-Arenas.example.json" DestinationFolder="$(PublishDir)../../configs/plugins/K4-Arenas/" />
+    <!-- CounterStrikeSharp copies this to alerena.json when no config exists yet -->
+    <Copy SourceFiles="$(ProjectDir)alerena.example.json" DestinationFolder="$(PublishDir)../../configs/plugins/alerena/" />
     <!-- CS2 servers only run on linux-x64 and win-x64: drop SQLite's native builds for other platforms (~30 MB) -->
     <ItemGroup>
       <NativeRuntimeDirs Include="$([System.IO.Directory]::GetDirectories('$(PublishDir)runtimes'))" />
       <UnusedNativeRuntimeDirs Include="@(NativeRuntimeDirs)" Condition="'%(Filename)' != 'linux-x64' And '%(Filename)' != 'win-x64'" />
     </ItemGroup>
     <RemoveDir Directories="@(UnusedNativeRuntimeDirs)" />
-    <Copy SourceFiles="$(ProjectDir)../src-shared/bin/$(Configuration)/$(TargetFramework)/K4-ArenaSharedApi.dll" DestinationFolder="$(PublishDir)../../shared/K4-ArenaSharedApi/" />
+    <Copy SourceFiles="$(ProjectDir)../src-shared/bin/$(Configuration)/$(TargetFramework)/alerena-api.dll" DestinationFolder="$(PublishDir)../../shared/alerena-api/" />
   </Target>
 </Project>

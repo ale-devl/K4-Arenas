@@ -1,4 +1,4 @@
-namespace K4Arenas
+namespace Alerena
 {
 	using CounterStrikeSharp.API;
 	using CounterStrikeSharp.API.Core;
@@ -6,7 +6,7 @@ namespace K4Arenas
 	using CounterStrikeSharp.API.Modules.Commands;
 	using CounterStrikeSharp.API.Modules.Commands.Targeting;
 	using CounterStrikeSharp.API.Modules.Utils;
-	using K4Arenas.Models;
+	using Alerena.Models;
 
 	public sealed partial class Plugin : BasePlugin
 	{
@@ -72,7 +72,7 @@ namespace K4Arenas
 
 			if (challenge is null)
 			{
-				info.ReplyToCommand($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, "k4.general.challenge.notchallenged")}");
+				info.ReplyToCommand($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, "alerena.general.challenge.notchallenged")}");
 				return;
 			}
 
@@ -80,15 +80,15 @@ namespace K4Arenas
 
 			if (!p2.IsValid)
 			{
-				info.ReplyToCommand($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, "k4.general.challenge.notavailable")}");
+				info.ReplyToCommand($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, "alerena.general.challenge.notavailable")}");
 				Challenges.Remove(challenge);
 				return;
 			}
 
 			challenge.IsAccepted = true;
 
-			info.ReplyToCommand($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, "k4.general.challenge.accepted", p2.Controller.PlayerName)}");
-			p2.Controller.PrintToChat($" {Localizer.ForPlayer(p2.Controller, "k4.general.prefix")} {Localizer.ForPlayer(p2.Controller, "k4.general.challenge.acceptedby", player!.PlayerName)}");
+			info.ReplyToCommand($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, "alerena.general.challenge.accepted", p2.Controller.PlayerName)}");
+			p2.Controller.PrintToChat($" {Localizer.ForPlayer(p2.Controller, "alerena.general.prefix")} {Localizer.ForPlayer(p2.Controller, "alerena.general.challenge.acceptedby", player!.PlayerName)}");
 		}
 
 		public void Command_Decline(CCSPlayerController? player, CommandInfo info)
@@ -105,7 +105,7 @@ namespace K4Arenas
 
 			if (challenge is null)
 			{
-				info.ReplyToCommand($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, "k4.general.challenge.notchallenged")}");
+				info.ReplyToCommand($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, "alerena.general.challenge.notchallenged")}");
 				return;
 			}
 
@@ -113,15 +113,15 @@ namespace K4Arenas
 
 			if (!p2.IsValid)
 			{
-				info.ReplyToCommand($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, "k4.general.challenge.notavailable")}");
+				info.ReplyToCommand($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, "alerena.general.challenge.notavailable")}");
 				Challenges.Remove(challenge);
 				return;
 			}
 
 			Challenges.Remove(challenge);
 
-			info.ReplyToCommand($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, "k4.general.challenge.declined", p2.Controller.PlayerName)}");
-			p2.Controller.PrintToChat($" {Localizer.ForPlayer(p2.Controller, "k4.general.prefix")} {Localizer.ForPlayer(p2.Controller, "k4.general.challenge.declinedby", player!.PlayerName)}");
+			info.ReplyToCommand($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, "alerena.general.challenge.declined", p2.Controller.PlayerName)}");
+			p2.Controller.PrintToChat($" {Localizer.ForPlayer(p2.Controller, "alerena.general.prefix")} {Localizer.ForPlayer(p2.Controller, "alerena.general.challenge.declinedby", player!.PlayerName)}");
 		}
 
 		public void Command_Challenge(CCSPlayerController? player, CommandInfo info)
@@ -138,14 +138,14 @@ namespace K4Arenas
 
 			if (challenge != null)
 			{
-				info.ReplyToCommand($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, "k4.general.challenge.inchallenge")}");
+				info.ReplyToCommand($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, "alerena.general.challenge.inchallenge")}");
 				return;
 			}
 
 			TargetResult targetResult = info.GetArgTargetResult(1);
 			if (targetResult.Count() != 1)
 			{
-				info.ReplyToCommand($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, "k4.general.challenge.invalidtarget")}");
+				info.ReplyToCommand($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, "alerena.general.challenge.invalidtarget")}");
 				return;
 			}
 
@@ -154,7 +154,7 @@ namespace K4Arenas
 
 			if (p2 is null || p2 == p1)
 			{
-				info.ReplyToCommand($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, "k4.general.challenge.invalidtarget")}");
+				info.ReplyToCommand($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, "alerena.general.challenge.invalidtarget")}");
 				return;
 			}
 
@@ -162,7 +162,7 @@ namespace K4Arenas
 
 			if (enemyChallenge != null)
 			{
-				info.ReplyToCommand($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, "k4.general.challenge.inchallenge")}");
+				info.ReplyToCommand($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, "alerena.general.challenge.inchallenge")}");
 				return;
 			}
 
@@ -171,14 +171,14 @@ namespace K4Arenas
 
 			if (p1ArenaID == -1 || p2ArenaID == -1)
 			{
-				info.ReplyToCommand($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, "k4.general.challenge.notinarena")}");
+				info.ReplyToCommand($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, "alerena.general.challenge.notinarena")}");
 				return;
 			}
 
 			ChallengeModel newChallenge = new(p1!, p2, p1ArenaID, p2ArenaID);
 			Challenges.Add(newChallenge);
 
-			info.ReplyToCommand($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, "k4.general.challenge.waiting", challengedPlayer.PlayerName)}");
+			info.ReplyToCommand($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, "alerena.general.challenge.waiting", challengedPlayer.PlayerName)}");
 
 			if (p2.Controller.IsBot)
 			{
@@ -194,12 +194,12 @@ namespace K4Arenas
 
 					newChallenge.IsAccepted = true;
 
-					fromPlayer.Controller.PrintToChat($" {Localizer.ForPlayer(fromPlayer.Controller, "k4.general.prefix")} {Localizer.ForPlayer(fromPlayer.Controller, "k4.general.challenge.acceptedby", p2.Controller.PlayerName)}");
+					fromPlayer.Controller.PrintToChat($" {Localizer.ForPlayer(fromPlayer.Controller, "alerena.general.prefix")} {Localizer.ForPlayer(fromPlayer.Controller, "alerena.general.challenge.acceptedby", p2.Controller.PlayerName)}");
 				});
 			}
 			else
 			{
-				challengedPlayer.PrintToChat($" {Localizer.ForPlayer(challengedPlayer, "k4.general.prefix")} {Localizer.ForPlayer(challengedPlayer, "k4.general.challenge.request", player!.PlayerName, Config.CommandSettings.ChallengeAcceptCommands.FirstOrDefault("Missing"), Config.CommandSettings.ChallengeDeclineCommands.FirstOrDefault("Missing"))}");
+				challengedPlayer.PrintToChat($" {Localizer.ForPlayer(challengedPlayer, "alerena.general.prefix")} {Localizer.ForPlayer(challengedPlayer, "alerena.general.challenge.request", player!.PlayerName, Config.CommandSettings.ChallengeAcceptCommands.FirstOrDefault("Missing"), Config.CommandSettings.ChallengeDeclineCommands.FirstOrDefault("Missing"))}");
 			}
 		}
 
@@ -218,7 +218,7 @@ namespace K4Arenas
 			if (arenaPlayer.AFK)
 			{
 				player!.ChangeTeam(CsTeam.Spectator);
-				arenaPlayer.ArenaTag = $"{Localizer["k4.general.afk"]} |";
+				arenaPlayer.ArenaTag = $"{Localizer["alerena.general.afk"]} |";
 
 				if (!Config.CompatibilitySettings.DisableClantags)
 				{
@@ -230,7 +230,7 @@ namespace K4Arenas
 			}
 			else
 			{
-				arenaPlayer.ArenaTag = $"{Localizer["k4.general.waiting"]} |";
+				arenaPlayer.ArenaTag = $"{Localizer["alerena.general.waiting"]} |";
 
 				if (!Config.CompatibilitySettings.DisableClantags)
 				{
@@ -239,7 +239,7 @@ namespace K4Arenas
 				}
 			}
 
-			info.ReplyToCommand($" {Localizer.ForPlayer(player, "k4.general.prefix")} {(arenaPlayer.AFK ? string.Format(Localizer.ForPlayer(player, "k4.chat.afk_enabled"), Config.CommandSettings.AFKCommands.FirstOrDefault("Missing")) : Localizer.ForPlayer(player, "k4.chat.afk_disabled"))}");
+			info.ReplyToCommand($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {(arenaPlayer.AFK ? string.Format(Localizer.ForPlayer(player, "alerena.chat.afk_enabled"), Config.CommandSettings.AFKCommands.FirstOrDefault("Missing")) : Localizer.ForPlayer(player, "alerena.chat.afk_disabled"))}");
 		}
 
 		public void Command_Queue(CCSPlayerController? player, CommandInfo info)
@@ -251,11 +251,11 @@ namespace K4Arenas
 
 			if (queuePlace == -1)
 			{
-				info.ReplyToCommand($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, "k4.chat.queue_not_in_queue")}");
+				info.ReplyToCommand($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, "alerena.chat.queue_not_in_queue")}");
 				return;
 			}
 
-			info.ReplyToCommand($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, "k4.chat.queue_position", queuePlace + 1)}");
+			info.ReplyToCommand($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, "alerena.chat.queue_position", queuePlace + 1)}");
 		}
 
 		public void Command_RoundPref(CCSPlayerController? player, CommandInfo info)

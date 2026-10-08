@@ -3,12 +3,12 @@ using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
 using Dapper;
-using K4Arenas.Models;
-using K4ArenaSharedApi;
+using Alerena.Models;
+using AlerenaApi;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 
-namespace K4Arenas;
+namespace Alerena;
 
 // Player preferences in a plugin-local SQLite file. Only explicit choices are stored;
 // anything a player never picked follows the config, so config changes reach them too.
@@ -141,7 +141,7 @@ public static class PlayerStore
 public sealed partial class Plugin : BasePlugin
 {
 	// Next to the config: the plugin folder is replaced on every update, the config folder is not
-	public string DatabasePath => Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "configs", "plugins", Path.GetFileName(ModuleDirectory), "k4-arenas.db"));
+	public string DatabasePath => Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "configs", "plugins", Path.GetFileName(ModuleDirectory), "alerena.db"));
 
 	public async Task LoadPlayerAsync(ulong steamId)
 	{

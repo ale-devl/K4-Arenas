@@ -1,11 +1,11 @@
-﻿namespace K4Arenas
+﻿namespace Alerena
 {
     using Microsoft.Extensions.Logging;
 
     using CounterStrikeSharp.API.Core;
     using CounterStrikeSharp.API.Core.Attributes;
 
-    using K4Arenas.Models;
+    using Alerena.Models;
     using CounterStrikeSharp.API;
     using CounterStrikeSharp.API.Modules.Timers;
     using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;

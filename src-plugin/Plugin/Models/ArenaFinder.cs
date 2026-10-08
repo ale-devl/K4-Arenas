@@ -1,7 +1,7 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Utils;
-using K4Arenas;
+using Alerena;
 using Microsoft.Extensions.Logging;
 
 public class ArenaFinder

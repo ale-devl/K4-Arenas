@@ -4,11 +4,11 @@ using CounterStrikeSharp.API.Core.Translations;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Utils;
 using CSSUniversalMenuAPI;
-using K4ArenaSharedApi;
+using AlerenaApi;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
-namespace K4Arenas.Models;
+namespace Alerena.Models;
 
 public class ArenaPlayer
 {
@@ -153,7 +153,7 @@ public class ArenaPlayer
 
 	public void ShowRoundPreferenceMenu()
 	{
-		IMenu? menu = Plugin.CreateMenu(Controller, "k4.menu.roundpref.title");
+		IMenu? menu = Plugin.CreateMenu(Controller, "alerena.menu.roundpref.title");
 		if (menu is null)
 			return;
 
@@ -173,7 +173,7 @@ public class ArenaPlayer
 	}
 
 	private string RoundItemTitle(RoundType roundType)
-		=> Localizer.ForPlayer(Controller, RoundPreferences.Contains(roundType) ? "k4.menu.roundpref.item_enabled" : "k4.menu.roundpref.item_disabled", Localizer.ForPlayer(Controller, roundType.Name));
+		=> Localizer.ForPlayer(Controller, RoundPreferences.Contains(roundType) ? "alerena.menu.roundpref.item_enabled" : "alerena.menu.roundpref.item_disabled", Localizer.ForPlayer(Controller, roundType.Name));
 
 	private void ToggleRoundPreference(RoundType roundType)
 	{
@@ -182,31 +182,31 @@ public class ArenaPlayer
 		{
 			if (RoundPreferences.Count == 1)
 			{
-				Controller.PrintToChat($" {Localizer.ForPlayer(Controller, "k4.general.prefix")} {Localizer.ForPlayer(Controller, "k4.chat.round_preferences_atleastone")}");
+				Controller.PrintToChat($" {Localizer.ForPlayer(Controller, "alerena.general.prefix")} {Localizer.ForPlayer(Controller, "alerena.chat.round_preferences_atleastone")}");
 			}
 			else
 			{
 				RoundChoices[roundType.Name] = false;
-				Controller.PrintToChat($" {Localizer.ForPlayer(Controller, "k4.general.prefix")} {Localizer.ForPlayer(Controller, "k4.chat.round_preferences_removed", Localizer.ForPlayer(Controller, roundType.Name))}");
+				Controller.PrintToChat($" {Localizer.ForPlayer(Controller, "alerena.general.prefix")} {Localizer.ForPlayer(Controller, "alerena.chat.round_preferences_removed", Localizer.ForPlayer(Controller, roundType.Name))}");
 			}
 		}
 		else
 		{
 			RoundChoices[roundType.Name] = true;
-			Controller.PrintToChat($" {Localizer.ForPlayer(Controller, "k4.general.prefix")} {Localizer.ForPlayer(Controller, "k4.chat.round_preferences_added", Localizer.ForPlayer(Controller, roundType.Name))}");
+			Controller.PrintToChat($" {Localizer.ForPlayer(Controller, "alerena.general.prefix")} {Localizer.ForPlayer(Controller, "alerena.chat.round_preferences_added", Localizer.ForPlayer(Controller, roundType.Name))}");
 		}
 	}
 
 	public void ShowWeaponPreferenceMenu()
 	{
-		IMenu? menu = Plugin.CreateMenu(Controller, "k4.menu.weaponpref.title");
+		IMenu? menu = Plugin.CreateMenu(Controller, "alerena.menu.weaponpref.title");
 		if (menu is null)
 			return;
 
 		foreach (WeaponType weaponType in Enum.GetValues<WeaponType>().Where(t => t != WeaponType.Unknown && IsAllowedWeaponType(t)))
 		{
 			IMenuItem item = menu.CreateItem();
-			item.Title = Localizer.ForPlayer(Controller, $"k4.rounds.{weaponType.ToString().ToLower()}");
+			item.Title = Localizer.ForPlayer(Controller, $"alerena.rounds.{weaponType.ToString().ToLower()}");
 			item.Selected += _ => ShowWeaponSubPreferenceMenu(menu, weaponType);
 		}
 
@@ -229,7 +229,7 @@ public class ArenaPlayer
 
 	private void ShowWeaponSubPreferenceMenu(IMenu parent, WeaponType weaponType)
 	{
-		IMenu? menu = Plugin.CreateMenu(Controller, "k4.menu.weaponpref.title", parent);
+		IMenu? menu = Plugin.CreateMenu(Controller, "alerena.menu.weaponpref.title", parent);
 		if (menu is null)
 			return;
 
@@ -237,9 +237,9 @@ public class ArenaPlayer
 		IEnumerable<CsItem?> weapons = WeaponModel.GetWeaponList(weaponType).Where(w => WeaponModel.GetWeaponType(w) == weaponType).Select(w => (CsItem?)w);
 		foreach (CsItem? weapon in weapons.Prepend(null))
 		{
-			string name = Localizer.ForPlayer(Controller, weapon?.ToString() ?? "k4.general.random");
+			string name = Localizer.ForPlayer(Controller, weapon?.ToString() ?? "alerena.general.random");
 			IMenuItem item = menu.CreateItem();
-			item.Title = Localizer.ForPlayer(Controller, GetWeaponPreference(weaponType) == weapon ? "k4.menu.weaponpref.item_enabled" : "k4.menu.weaponpref.item_disabled", name);
+			item.Title = Localizer.ForPlayer(Controller, GetWeaponPreference(weaponType) == weapon ? "alerena.menu.weaponpref.item_enabled" : "alerena.menu.weaponpref.item_disabled", name);
 			item.Selected += _ =>
 			{
 				SetWeaponPreference(weaponType, weapon);
@@ -254,6 +254,6 @@ public class ArenaPlayer
 	private void SetWeaponPreference(WeaponType weaponType, CsItem? item)
 	{
 		WeaponChoices[weaponType] = item;
-		Controller.PrintToChat($" {Localizer.ForPlayer(Controller, "k4.general.prefix")} {Localizer.ForPlayer(Controller, "k4.chat.weapon_preferences_added", Localizer.ForPlayer(Controller, item?.ToString() ?? "k4.general.random"))}");
+		Controller.PrintToChat($" {Localizer.ForPlayer(Controller, "alerena.general.prefix")} {Localizer.ForPlayer(Controller, "alerena.chat.weapon_preferences_added", Localizer.ForPlayer(Controller, item?.ToString() ?? "alerena.general.random"))}");
 	}
 }

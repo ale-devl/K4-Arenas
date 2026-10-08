@@ -1,11 +1,11 @@
-namespace K4Arenas
+namespace Alerena
 {
 	using CounterStrikeSharp.API.Core;
 	using CounterStrikeSharp.API.Core.Translations;
 	using CounterStrikeSharp.API.Modules.Commands;
 	using CounterStrikeSharp.API.Modules.Extensions;
 	using CSSUniversalMenuAPI;
-	using K4Arenas.Models;
+	using Alerena.Models;
 	using Microsoft.Extensions.Logging;
 
 	public sealed partial class Plugin : BasePlugin
@@ -15,7 +15,7 @@ namespace K4Arenas
 		{
 			if (UniversalMenu.DefaultDriver is null)
 			{
-				player.PrintToChat($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, "k4.chat.no_menu_driver")}");
+				player.PrintToChat($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, "alerena.chat.no_menu_driver")}");
 				Logger.LogError("No menu plugin installed: menus need CSSUniversalMenuAPI with a driver such as SharpModMenu");
 				return null;
 			}
@@ -30,33 +30,33 @@ namespace K4Arenas
 			if (!CommandHelper(player, info, CommandUsage.CLIENT_ONLY, permission: "@css/config"))
 				return;
 
-			IMenu? menu = CreateMenu(player!, "k4.admin.title");
+			IMenu? menu = CreateMenu(player!, "alerena.admin.title");
 			if (menu is null)
 				return;
 
 			string Text(string key) => Localizer.ForPlayer(player, key);
 
-			AddEntry(menu, () => $"{Text("k4.admin.matchmaking")}: {Text(UseRotation ? "k4.admin.rotation" : "k4.admin.ladder")}", _ =>
+			AddEntry(menu, () => $"{Text("alerena.admin.matchmaking")}: {Text(UseRotation ? "alerena.admin.rotation" : "alerena.admin.ladder")}", _ =>
 			{
 				Config.Matchmaking = UseRotation ? "ladder" : "rotation";
 				SaveConfig();
 			});
-			AddEntry(menu, () => Text("k4.admin.default_rounds"), _ => ShowDefaultRoundsMenu(player!, menu));
-			AddEntry(menu, () => $"{Text("k4.admin.fallback_round")}: {Text(Config.DefaultWeaponSettings.DefaultRound ?? "k4.general.random")}",
-				item => ShowFallbackRoundMenu(player!, menu, () => item.Title = $"{Text("k4.admin.fallback_round")}: {Text(Config.DefaultWeaponSettings.DefaultRound ?? "k4.general.random")}"));
+			AddEntry(menu, () => Text("alerena.admin.default_rounds"), _ => ShowDefaultRoundsMenu(player!, menu));
+			AddEntry(menu, () => $"{Text("alerena.admin.fallback_round")}: {Text(Config.DefaultWeaponSettings.DefaultRound ?? "alerena.general.random")}",
+				item => ShowFallbackRoundMenu(player!, menu, () => item.Title = $"{Text("alerena.admin.fallback_round")}: {Text(Config.DefaultWeaponSettings.DefaultRound ?? "alerena.general.random")}"));
 
 			CompatibilitySettings Compat() => Config.CompatibilitySettings;
-			AddToggle(menu, player!, () => Text("k4.admin.prevent_draws"), () => Compat().PreventDrawRounds, v => Compat().PreventDrawRounds = v);
-			AddToggle(menu, player!, () => Text("k4.admin.block_damage"), () => Compat().BlockDamageOfNotOpponent, v => Compat().BlockDamageOfNotOpponent = v);
-			AddToggle(menu, player!, () => Text("k4.admin.block_flash"), () => Compat().BlockFlashOfNotOpponent, v => Compat().BlockFlashOfNotOpponent = v);
-			AddToggle(menu, player!, () => Text("k4.admin.knife"), () => Compat().GiveKnifeByDefault, v => Compat().GiveKnifeByDefault = v);
+			AddToggle(menu, player!, () => Text("alerena.admin.prevent_draws"), () => Compat().PreventDrawRounds, v => Compat().PreventDrawRounds = v);
+			AddToggle(menu, player!, () => Text("alerena.admin.block_damage"), () => Compat().BlockDamageOfNotOpponent, v => Compat().BlockDamageOfNotOpponent = v);
+			AddToggle(menu, player!, () => Text("alerena.admin.block_flash"), () => Compat().BlockFlashOfNotOpponent, v => Compat().BlockFlashOfNotOpponent = v);
+			AddToggle(menu, player!, () => Text("alerena.admin.knife"), () => Compat().GiveKnifeByDefault, v => Compat().GiveKnifeByDefault = v);
 
 			menu.Display();
 		}
 
 		private void ShowDefaultRoundsMenu(CCSPlayerController player, IMenu parent)
 		{
-			IMenu? menu = CreateMenu(player, "k4.admin.default_rounds", parent);
+			IMenu? menu = CreateMenu(player, "alerena.admin.default_rounds", parent);
 			if (menu is null)
 				return;
 
@@ -68,13 +68,13 @@ namespace K4Arenas
 
 		private void ShowFallbackRoundMenu(CCSPlayerController player, IMenu parent, Action refreshParent)
 		{
-			IMenu? menu = CreateMenu(player, "k4.admin.fallback_round", parent);
+			IMenu? menu = CreateMenu(player, "alerena.admin.fallback_round", parent);
 			if (menu is null)
 				return;
 
 			foreach (RoundType round in RoundType.RoundTypes.Where(r => r.TeamSize < 2 && r.StartFunction == null))
 			{
-				string key = Config.DefaultWeaponSettings.DefaultRound == round.Name ? "k4.menu.weaponpref.item_enabled" : "k4.menu.weaponpref.item_disabled";
+				string key = Config.DefaultWeaponSettings.DefaultRound == round.Name ? "alerena.menu.weaponpref.item_enabled" : "alerena.menu.weaponpref.item_disabled";
 				AddEntry(menu, () => Localizer.ForPlayer(player, key, Localizer.ForPlayer(player, round.Name)), _ =>
 				{
 					Config.DefaultWeaponSettings.DefaultRound = round.Name;
@@ -101,13 +101,13 @@ namespace K4Arenas
 		}
 
 		private void AddToggle(IMenu menu, CCSPlayerController player, Func<string> label, Func<bool> get, Action<bool> set)
-			=> AddEntry(menu, () => $"{label()}: {Localizer.ForPlayer(player, get() ? "k4.admin.on" : "k4.admin.off")}", _ =>
+			=> AddEntry(menu, () => $"{label()}: {Localizer.ForPlayer(player, get() ? "alerena.admin.on" : "alerena.admin.off")}", _ =>
 			{
 				set(!get());
 				SaveConfig();
 			});
 
-		// Writes K4-Arenas.json and applies the change right away
+		// Writes alerena.json and applies the change right away
 		private void SaveConfig()
 		{
 			try

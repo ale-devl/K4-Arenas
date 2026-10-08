@@ -1,4 +1,4 @@
-namespace K4Arenas.Models;
+namespace Alerena.Models;
 
 // Standard Elo. Display only: ratings never influence matchmaking.
 public static class Elo

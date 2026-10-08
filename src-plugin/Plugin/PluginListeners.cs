@@ -1,10 +1,10 @@
-namespace K4Arenas
+namespace Alerena
 {
 	using CounterStrikeSharp.API;
 	using CounterStrikeSharp.API.Core;
 	using CounterStrikeSharp.API.Modules.Commands;
 	using CounterStrikeSharp.API.Modules.Utils;
-	using K4Arenas.Models;
+	using Alerena.Models;
 
 	public sealed partial class Plugin : BasePlugin
 	{

@@ -1,4 +1,4 @@
-namespace K4Arenas
+namespace Alerena
 {
 	using CounterStrikeSharp.API;
 	using CounterStrikeSharp.API.Core;
@@ -6,7 +6,7 @@ namespace K4Arenas
 	using CounterStrikeSharp.API.Modules.Cvars;
 	using CounterStrikeSharp.API.Modules.Timers;
 	using CounterStrikeSharp.API.Modules.Utils;
-	using K4Arenas.Models;
+	using Alerena.Models;
 
 	public sealed partial class Plugin : BasePlugin
 	{
@@ -286,9 +286,9 @@ namespace K4Arenas
 				{
 					if (player.AFK)
 					{
-						player.Controller.PrintToChat($"{Localizer.ForPlayer(player.Controller, "k4.general.prefix")} {Localizer.ForPlayer(player.Controller, "k4.chat.afk_reminder", Config.CommandSettings.AFKCommands.FirstOrDefault("Missing"))}");
+						player.Controller.PrintToChat($"{Localizer.ForPlayer(player.Controller, "alerena.general.prefix")} {Localizer.ForPlayer(player.Controller, "alerena.chat.afk_reminder", Config.CommandSettings.AFKCommands.FirstOrDefault("Missing"))}");
 
-						player.ArenaTag = $"{Localizer["k4.general.afk"]} |";
+						player.ArenaTag = $"{Localizer["alerena.general.afk"]} |";
 
 						if (!Config.CompatibilitySettings.DisableClantags)
 						{
@@ -376,7 +376,7 @@ namespace K4Arenas
 				{
 					ArenaPlayer arenaPlayer = notAFKrankedPlayers.Dequeue();
 
-					arenaPlayer.ArenaTag = $"{Localizer["k4.general.waiting"]} |";
+					arenaPlayer.ArenaTag = $"{Localizer["alerena.general.waiting"]} |";
 
 					if (!Config.CompatibilitySettings.DisableClantags)
 					{
@@ -461,7 +461,7 @@ namespace K4Arenas
 				{
 					arenaPlayer!.AFK = true;
 
-					arenaPlayer.ArenaTag = $"{Localizer["k4.general.afk"]} |";
+					arenaPlayer.ArenaTag = $"{Localizer["alerena.general.afk"]} |";
 
 					if (!Config.CompatibilitySettings.DisableClantags)
 					{
@@ -471,14 +471,14 @@ namespace K4Arenas
 
 					player!.ChangeTeam(CsTeam.Spectator);
 
-					player.PrintToChat($" {Localizer.ForPlayer(player, "k4.general.prefix")} {string.Format(Localizer.ForPlayer(player, "k4.chat.afk_enabled"), Config.CommandSettings.AFKCommands.FirstOrDefault("Missing"))}");
+					player.PrintToChat($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {string.Format(Localizer.ForPlayer(player, "alerena.chat.afk_enabled"), Config.CommandSettings.AFKCommands.FirstOrDefault("Missing"))}");
 					return HookResult.Stop;
 				}
 				else if (arenaPlayer?.AFK == true && player.Team == CsTeam.Spectator && newTeam > CsTeam.Spectator)
 				{
 					arenaPlayer!.AFK = false;
 
-					arenaPlayer.ArenaTag = $"{Localizer["k4.general.waiting"]} |";
+					arenaPlayer.ArenaTag = $"{Localizer["alerena.general.waiting"]} |";
 
 					if (!Config.CompatibilitySettings.DisableClantags)
 					{
@@ -486,7 +486,7 @@ namespace K4Arenas
 						Utilities.SetStateChanged(arenaPlayer.Controller, "CCSPlayerController", "m_szClan");
 					}
 
-					player.PrintToChat($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, "k4.chat.afk_disabled")}");
+					player.PrintToChat($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, "alerena.chat.afk_disabled")}");
 					return HookResult.Continue;
 				}
 
