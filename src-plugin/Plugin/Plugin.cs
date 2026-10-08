@@ -19,7 +19,6 @@
         public required PluginConfig Config { get; set; } = new PluginConfig();
         public GameConfig? GameConfig { get; set; }
         public bool IsBetweenRounds = false;
-        public bool HasDatabase = false;
 
         public void OnConfigParsed(PluginConfig config)
         {
@@ -121,16 +120,15 @@
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(ModulePath);
             FlashFixFound = Directory.Exists(Path.Combine(ModulePath, "..", "FlashingXMLHintFix"));
 
-            if (!IsDatabaseConfigDefault(Config))
+            try
             {
-                HasDatabase = true;
-
-                Task.Run(CreateTableAsync).Wait();
+                Task.Run(() => PlayerStore.InitializeAsync(DatabasePath)).Wait();
                 Task.Run(PurgeDatabaseAsync);
             }
-            else
+            catch (Exception ex)
             {
-                base.Logger.LogError("Please setup your MySQL database settings in the configuration file in order to use the preferences system.");
+                // The plugin still runs on config defaults, preferences just aren't saved
+                Logger.LogError("Could not open the preferences database at {Path}: {Error}", DatabasePath, ex.InnerException?.Message ?? ex.Message);
             }
 
             //** ? Core */

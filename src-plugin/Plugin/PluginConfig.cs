@@ -268,28 +268,8 @@ namespace K4Arenas
 
 	public sealed class DatabaseSettings : ConfigSection
 	{
-		[JsonPropertyName("host")]
-		public string Host { get; set; } = "localhost";
-
-		[JsonPropertyName("username")]
-		public string Username { get; set; } = "root";
-
-		[JsonPropertyName("database")]
-		public string Database { get; set; } = "database";
-
-		[JsonPropertyName("password")]
-		public string Password { get; set; } = "password";
-
-		[JsonPropertyName("port")]
-		public int Port { get; set; } = 3306;
-
-		[JsonPropertyName("sslmode")]
-		public string Sslmode { get; set; } = "preferred";
-
-		[JsonPropertyName("table-prefix")]
-		public string TablePrefix { get; set; } = "";
-
+		// Players not seen for this many days are deleted from the preferences database; 0 keeps them forever
 		[JsonPropertyName("table-purge-days")]
-		public int TablePurgeDays { get; set; } = 30;
+		public int TablePurgeDays { get; set; } = 0;
 	}
 }

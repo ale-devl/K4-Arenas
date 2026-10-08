@@ -52,7 +52,7 @@ jobs:
           dotnet publish src-botsplugin/K4-Arenas-Bots.csproj -c Release
 
       - name: Test
-        run: dotnet run tests/ConfigParsing.cs
+        run: for test in tests/*.cs; do dotnet run "$test"; done
 
       - name: Zip
         run: |

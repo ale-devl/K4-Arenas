@@ -1,141 +1,128 @@
-
-using System.Data;
+using System.Text.Json;
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Entities.Constants;
+using Dapper;
 using K4Arenas.Models;
 using K4ArenaSharedApi;
-using MySqlConnector;
-using Dapper;
-using CounterStrikeSharp.API.Modules.Entities.Constants;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 
 namespace K4Arenas;
 
+// Player preferences in a plugin-local SQLite file. Only explicit choices are stored;
+// anything a player never picked follows the config, so config changes reach them too.
+public static class PlayerStore
+{
+	// Weapons: weapon type -> item name, null = picked "Random". Rounds: round name -> enabled.
+	public sealed record Preferences(Dictionary<WeaponType, CsItem?> Weapons, Dictionary<string, bool> Rounds);
+
+	private static async Task<SqliteConnection> OpenAsync(string path)
+	{
+		var connection = new SqliteConnection(new SqliteConnectionStringBuilder { DataSource = path }.ToString());
+		await connection.OpenAsync();
+		return connection;
+	}
+
+	public static async Task InitializeAsync(string path)
+	{
+		Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+
+		await using SqliteConnection connection = await OpenAsync(path);
+		await connection.ExecuteAsync("""
+			PRAGMA journal_mode = WAL;
+			CREATE TABLE IF NOT EXISTS players (
+				steamid64 INTEGER PRIMARY KEY,
+				weapons TEXT NOT NULL DEFAULT '{}',
+				rounds TEXT NOT NULL DEFAULT '{}',
+				lastseen TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+			);
+			""");
+	}
+
+	public static async Task<Preferences> LoadAsync(string path, ulong steamId)
+	{
+		await using SqliteConnection connection = await OpenAsync(path);
+		(string weapons, string rounds) = await connection.QuerySingleAsync<(string, string)>("""
+			INSERT INTO players (steamid64) VALUES (@SteamId)
+			ON CONFLICT (steamid64) DO UPDATE SET lastseen = CURRENT_TIMESTAMP
+			RETURNING weapons, rounds;
+			""", new { SteamId = (long)steamId });
+
+		return new Preferences(ParseWeapons(weapons), ParseRounds(rounds));
+	}
+
+	public static async Task SaveAsync(string path, ulong steamId, Preferences preferences)
+	{
+		await using SqliteConnection connection = await OpenAsync(path);
+		await connection.ExecuteAsync("""
+			INSERT INTO players (steamid64, weapons, rounds) VALUES (@SteamId, @Weapons, @Rounds)
+			ON CONFLICT (steamid64) DO UPDATE SET weapons = excluded.weapons, rounds = excluded.rounds, lastseen = CURRENT_TIMESTAMP;
+			""", new
+		{
+			SteamId = (long)steamId,
+			Weapons = JsonSerializer.Serialize(preferences.Weapons.ToDictionary(w => w.Key.ToString(), w => w.Value?.ToString())),
+			Rounds = JsonSerializer.Serialize(preferences.Rounds)
+		});
+	}
+
+	public static async Task<int> PurgeAsync(string path, int days)
+	{
+		if (days <= 0)
+			return 0;
+
+		await using SqliteConnection connection = await OpenAsync(path);
+		return await connection.ExecuteAsync("DELETE FROM players WHERE lastseen < datetime('now', @Age);", new { Age = $"-{days} days" });
+	}
+
+	// Entries that no longer parse (renamed items, hand-edited rows) are dropped instead of failing the whole load
+	private static Dictionary<WeaponType, CsItem?> ParseWeapons(string json)
+	{
+		Dictionary<WeaponType, CsItem?> weapons = [];
+		foreach ((string type, string? item) in TryDeserialize<Dictionary<string, string?>>(json) ?? [])
+		{
+			if (!Enum.TryParse(type, out WeaponType weaponType))
+				continue;
+
+			if (item is null)
+				weapons[weaponType] = null;
+			else if (Enum.TryParse(item, out CsItem csItem))
+				weapons[weaponType] = csItem;
+		}
+		return weapons;
+	}
+
+	private static Dictionary<string, bool> ParseRounds(string json)
+		=> TryDeserialize<Dictionary<string, bool>>(json) ?? [];
+
+	private static T? TryDeserialize<T>(string json)
+	{
+		try { return JsonSerializer.Deserialize<T>(json); }
+		catch (JsonException) { return default; }
+	}
+}
+
 public sealed partial class Plugin : BasePlugin
 {
-	public static MySqlConnection CreateConnection(PluginConfig config)
-	{
-		DatabaseSettings _settings = config.DatabaseSettings;
+	// Next to the config: the plugin folder is replaced on every update, the config folder is not
+	public string DatabasePath => Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "configs", "plugins", Path.GetFileName(ModuleDirectory), "k4-arenas.db"));
 
-		MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
-		{
-			Server = _settings.Host,
-			UserID = _settings.Username,
-			Password = _settings.Password,
-			Database = _settings.Database,
-			Port = (uint)_settings.Port,
-			SslMode = Enum.TryParse(_settings.Sslmode, true, out MySqlSslMode sslMode) ? sslMode : MySqlSslMode.Preferred,
-		};
-
-		return new MySqlConnection(builder.ToString());
-	}
-
-	public async Task CreateTableAsync()
-	{
-		string tablePrefix = Config.DatabaseSettings.TablePrefix;
-		string tableQuery = @$"CREATE TABLE IF NOT EXISTS `{tablePrefix}k4-arenas` (
-			`steamid64` BIGINT UNIQUE,
-			`rifle` INT,
-			`sniper` INT,
-			`shotgun` INT,
-			`smg` INT,
-			`lmg` INT,
-			`pistol` INT,
-			`rounds` VARCHAR(256) NOT NULL,
-			`lastseen` TIMESTAMP NOT NULL
-		);";
-
-		using MySqlConnection connection = CreateConnection(Config);
-		await connection.OpenAsync();
-
-		await connection.ExecuteAsync(tableQuery);
-	}
-
-	public async Task LoadPlayerAsync(ulong SteamID)
+	public async Task LoadPlayerAsync(ulong steamId)
 	{
 		try
 		{
-			string tablePrefix = Config.DatabaseSettings.TablePrefix;
+			PlayerStore.Preferences preferences = await PlayerStore.LoadAsync(DatabasePath, steamId);
 
-			DefaultWeaponSettings dws = Config.DefaultWeaponSettings;
-
-			string sqlInsertOrUpdate = $@"
-				INSERT INTO `{tablePrefix}k4-arenas` (`steamid64`, `lastseen`, `rifle`, `sniper`, `shotgun`, `smg`, `lmg`, `pistol`, `rounds`)
-				VALUES (@SteamID, CURRENT_TIMESTAMP, @DefaultRifle, @DefaultSniper, @DefaultShotgun, @DefaultSMG, @DefaultLMG, @DefaultPistol, @Rounds)
-				ON DUPLICATE KEY UPDATE `lastseen` = CURRENT_TIMESTAMP;";
-
-			string sqlSelect = $@"
-				SELECT `rifle`, `sniper`, `shotgun`, `smg`, `lmg`, `pistol`, `rounds`
-				FROM `{tablePrefix}k4-arenas` WHERE `steamid64` = @SteamID;";
-
-			using MySqlConnection connection = CreateConnection(Config);
-			await connection.OpenAsync();
-
-			string rounds = string.Join(",", RoundType.RoundTypes.Where(r => r.EnabledByDefault).Select(x => x.ID.ToString()));
-			await connection.ExecuteAsync(sqlInsertOrUpdate, new
+			Server.NextFrame(() =>
 			{
-				SteamID,
-				Rounds = rounds,
-				DefaultRifle = FindEnumValueByEnumMemberValue(dws.DefaultRifle),
-				DefaultSniper = FindEnumValueByEnumMemberValue(dws.DefaultSniper),
-				DefaultShotgun = FindEnumValueByEnumMemberValue(dws.DefaultShotgun),
-				DefaultSMG = FindEnumValueByEnumMemberValue(dws.DefaultSMG),
-				DefaultLMG = FindEnumValueByEnumMemberValue(dws.DefaultLMG),
-				DefaultPistol = FindEnumValueByEnumMemberValue(dws.DefaultPistol)
-			});
-
-			dynamic? result = await connection.QuerySingleOrDefaultAsync<dynamic>(sqlSelect, new { SteamID });
-			if (result != null)
-			{
-				ArenaPlayer? arenaPlayer = Arenas?.FindPlayer(SteamID);
-
-				if (arenaPlayer == null)
+				ArenaPlayer? arenaPlayer = Arenas?.FindPlayer(steamId);
+				if (arenaPlayer is null)
 					return;
 
-				arenaPlayer.WeaponPreferences = new Dictionary<WeaponType, CsItem?>
-				{
-					{ WeaponType.Rifle, (CsItem?)result.rifle },
-					{ WeaponType.Sniper, (CsItem?)result.sniper },
-					{ WeaponType.Shotgun, (CsItem?)result.shotgun },
-					{ WeaponType.SMG, (CsItem?)result.smg },
-					{ WeaponType.LMG, (CsItem?)result.lmg },
-					{ WeaponType.Pistol, (CsItem?)result.pistol }
-				};
-
-				if (!string.IsNullOrEmpty(result.rounds))
-				{
-					List<int> validRoundIds = [];
-					string[] roundIds = result.rounds.Split(',');
-					List<RoundType> roundPreferences = [];
-
-					foreach (string roundId in roundIds)
-					{
-						if (int.TryParse(roundId, out int id))
-						{
-							RoundType? roundType = RoundType.RoundTypes.FirstOrDefault(x => x.ID == id);
-							if (roundType != null)
-							{
-								roundPreferences.Add(roundType);
-								validRoundIds.Add(id);
-							}
-						}
-					}
-
-					if (validRoundIds.Count != roundIds.Length)
-					{
-						string validRounds = string.Join(",", validRoundIds);
-						string sqlUpdateRounds = $@"
-							UPDATE `{tablePrefix}k4-arenas`
-							SET `rounds` = @ValidRounds
-							WHERE `steamid64` = @SteamID;";
-
-						await connection.ExecuteAsync(sqlUpdateRounds, new { SteamID, ValidRounds = validRounds });
-					}
-
-					arenaPlayer.RoundPreferences = roundPreferences;
-
-					arenaPlayer.Loaded = true;
-				}
-			}
+				arenaPlayer.WeaponChoices = preferences.Weapons;
+				arenaPlayer.RoundChoices = preferences.Rounds;
+				arenaPlayer.Loaded = true;
+			});
 		}
 		catch (Exception ex)
 		{
@@ -143,26 +130,37 @@ public sealed partial class Plugin : BasePlugin
 		}
 	}
 
-	public async Task PurgeDatabaseAsync()
+	public void SavePlayer(ArenaPlayer player)
 	{
-		if (Config.DatabaseSettings.TablePurgeDays <= 0)
+		// Saving before the load finished would overwrite the stored choices
+		if (!player.Loaded)
 			return;
 
-		string query = $@"
-			DELETE FROM `{Config.DatabaseSettings.TablePrefix}k4-arenas`
-			WHERE `lastseen` < DATE_SUB(NOW(), INTERVAL @PurgeDays DAY);";
+		ulong steamId = player.SteamID;
+		PlayerStore.Preferences snapshot = new(new(player.WeaponChoices), new(player.RoundChoices));
 
-		using MySqlConnection connection = CreateConnection(Config);
-		await connection.OpenAsync();
-		await connection.ExecuteAsync(query, new { PurgeDays = Config.DatabaseSettings.TablePurgeDays });
+		Task.Run(async () =>
+		{
+			try
+			{
+				await PlayerStore.SaveAsync(DatabasePath, steamId, snapshot);
+			}
+			catch (Exception ex)
+			{
+				Logger.LogError("Failed to save player preferences: {0}", ex.Message);
+			}
+		});
 	}
 
-	public static bool IsDatabaseConfigDefault(PluginConfig config)
+	public async Task PurgeDatabaseAsync()
 	{
-		DatabaseSettings _settings = config.DatabaseSettings;
-		return _settings.Host == "localhost" &&
-			_settings.Username == "root" &&
-			_settings.Database == "database" &&
-			_settings.Password == "password";
+		try
+		{
+			await PlayerStore.PurgeAsync(DatabasePath, Config.DatabaseSettings.TablePurgeDays);
+		}
+		catch (Exception ex)
+		{
+			Logger.LogError("Failed to purge old players: {0}", ex.Message);
+		}
 	}
 }

@@ -107,23 +107,10 @@ namespace K4Arenas
 					arenaPlayer.Controller.PrintToChat($" {Localizer.ForPlayer(playerController, "k4.general.prefix")} {Localizer.ForPlayer(playerController, "k4.chat.queue_added", WaitingArenaPlayers.Count)}");
 					arenaPlayer.Controller.PrintToChat($" {Localizer.ForPlayer(playerController, "k4.general.prefix")} {Localizer.ForPlayer(playerController, "k4.chat.arena_afk", Config.CommandSettings.AFKCommands.FirstOrDefault() ?? "Missing")}");
 
-					if (HasDatabase)
-					{
-						arenaPlayer.Controller.PrintToChat($" {Localizer.ForPlayer(playerController, "k4.general.prefix")} {Localizer.ForPlayer(playerController, "k4.chat.arena_commands", Config.CommandSettings.GunsCommands.FirstOrDefault() ?? "Missing", Config.CommandSettings.RoundsCommands.FirstOrDefault() ?? "Missing")}");
+					arenaPlayer.Controller.PrintToChat($" {Localizer.ForPlayer(playerController, "k4.general.prefix")} {Localizer.ForPlayer(playerController, "k4.chat.arena_commands", Config.CommandSettings.GunsCommands.FirstOrDefault() ?? "Missing", Config.CommandSettings.RoundsCommands.FirstOrDefault() ?? "Missing")}");
 
-						ulong steamID = playerController.SteamID;
-						Task.Run(async () =>
-						{
-							try
-							{
-								await LoadPlayerAsync(steamID);
-							}
-							catch (Exception ex)
-							{
-								Logger.LogError($"Error loading player data: {ex.Message}");
-							}
-						});
-					}
+					ulong steamID = playerController.SteamID;
+					Task.Run(() => LoadPlayerAsync(steamID));
 				}
 
 				return arenaPlayer;

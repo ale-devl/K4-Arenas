@@ -116,11 +116,7 @@ namespace K4Arenas
 
 		public CsItem? GetPlayerWeaponPreference(CCSPlayerController player, WeaponType weaponType)
 		{
-			ArenaPlayer? arenaPlayer = plugin.Arenas?.FindPlayer(player);
-			if (arenaPlayer is null || !arenaPlayer.Loaded)
-				return null;
-
-			return arenaPlayer.WeaponPreferences.TryGetValue(weaponType, out CsItem? preference) ? preference : null;
+			return plugin.Arenas?.FindPlayer(player)?.GetWeaponPreference(weaponType);
 		}
 	}
 }
