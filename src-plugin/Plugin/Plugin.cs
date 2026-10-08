@@ -98,6 +98,11 @@
             }
 
             config.RoundSettings.RemoveAll(r => string.IsNullOrWhiteSpace(r.TranslationName));
+
+            foreach (string duplicate in config.RoundSettings.GroupBy(r => r.TranslationName).Where(g => g.Count() > 1).Select(g => g.Key))
+                Logger.LogWarning("Config: round-settings has more than one '{Round}', only the first is used", duplicate);
+
+            config.RoundSettings = [.. config.RoundSettings.DistinctBy(r => r.TranslationName)];
         }
 
         public Queue<ArenaPlayer> WaitingArenaPlayers { get; set; } = new Queue<ArenaPlayer>();

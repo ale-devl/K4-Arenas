@@ -220,11 +220,14 @@ namespace K4Arenas
 				RoundType? defaultRound = RoundType.RoundTypes.FirstOrDefault(rt => rt.Name == Config.DefaultWeaponSettings.DefaultRound);
 				if (defaultRound != null)
 				{
-					return (RoundType)defaultRound;
+					return defaultRound;
 				}
 			}
 
 			List<RoundType> availableRoundTypes = [.. RoundType.RoundTypes.Where(rt => rt.TeamSize < 2)];
+			if (availableRoundTypes.Count == 0) // only team rounds configured
+				availableRoundTypes = RoundType.RoundTypes;
+
 			return availableRoundTypes[Random.Shared.Next(0, availableRoundTypes.Count)];
 		}
 

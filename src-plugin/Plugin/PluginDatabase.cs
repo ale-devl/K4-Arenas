@@ -114,7 +114,7 @@ public sealed partial class Plugin : BasePlugin
 							RoundType? roundType = RoundType.RoundTypes.FirstOrDefault(x => x.ID == id);
 							if (roundType != null)
 							{
-								roundPreferences.Add((RoundType)roundType);
+								roundPreferences.Add(roundType);
 								validRoundIds.Add(id);
 							}
 						}

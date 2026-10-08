@@ -7,7 +7,7 @@ using K4ArenaSharedApi;
 
 namespace K4Arenas.Models
 {
-	public struct RoundType(string name, int teamSize, CsItem? primary, CsItem? secondary, bool usePreferredPrimary = false, WeaponType? primaryPreference = null, bool usePreferredSecondary = false, bool armor = true, bool helmet = true, bool enabledByDefaultAction = true, Action<List<CCSPlayerController>?, List<CCSPlayerController>?>? startFunction = null, Action<List<CCSPlayerController>?, List<CCSPlayerController>?>? endFunction = null)
+	public sealed class RoundType(string name, int teamSize, CsItem? primary, CsItem? secondary, bool usePreferredPrimary = false, WeaponType? primaryPreference = null, bool usePreferredSecondary = false, bool armor = true, bool helmet = true, bool enabledByDefaultAction = true, Action<List<CCSPlayerController>?, List<CCSPlayerController>?>? startFunction = null, Action<List<CCSPlayerController>?, List<CCSPlayerController>?>? endFunction = null)
 	{
 		private static int nextID = 0;
 
@@ -38,6 +38,10 @@ namespace K4Arenas.Models
 		public static readonly RoundType Knife = new("k4.rounds.knife", 1, null, null, false, null, false, false, false);
 
 		public static List<RoundType> RoundTypes { get; } = [];
+
+		// Identity is the translation key, so preferences keep matching when round types are rebuilt from config
+		public override bool Equals(object? obj) => obj is RoundType other && other.Name == Name;
+		public override int GetHashCode() => Name.GetHashCode();
 
 		public static void AddRoundType(RoundTypeReader roundType)
 		{
