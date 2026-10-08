@@ -1,4 +1,4 @@
-using K4Arenas.Models;
+using Alerena.Models;
 
 public class ChallengeModel
 {

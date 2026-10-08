@@ -1,16 +1,16 @@
-namespace K4Arenas
+namespace Alerena
 {
 	using CounterStrikeSharp.API;
 	using CounterStrikeSharp.API.Core;
 	using CounterStrikeSharp.API.Core.Capabilities;
 	using CounterStrikeSharp.API.Modules.Utils;
 	using CounterStrikeSharp.API.Modules.Entities.Constants;
-	using K4Arenas.Models;
-	using K4ArenaSharedApi;
+	using Alerena.Models;
+	using AlerenaApi;
 
 	public sealed partial class Plugin : BasePlugin
 	{
-		public static PluginCapability<IK4ArenaSharedApi> Capability_SharedAPI { get; } = new("k4-arenas:sharedapi");
+		public static PluginCapability<IAlerenaApi> Capability_SharedAPI { get; } = new("alerena:api");
 
 		public void Initialize_API()
 		{
@@ -18,7 +18,7 @@ namespace K4Arenas
 		}
 	}
 
-	public class ArenaAPIHandler : IK4ArenaSharedApi
+	public class ArenaAPIHandler : IAlerenaApi
 	{
 		public Plugin plugin { get; set; }
 		public ArenaAPIHandler(Plugin plugin)
@@ -94,7 +94,7 @@ namespace K4Arenas
 			{
 				arenaPlayer!.AFK = true;
 				player!.ChangeTeam(CsTeam.Spectator);
-				arenaPlayer.ArenaTag = $"{plugin.Localizer["k4.general.afk"]} |";
+				arenaPlayer.ArenaTag = $"{plugin.Localizer["alerena.general.afk"]} |";
 
 				if (!plugin.Config.CompatibilitySettings.DisableClantags)
 				{
@@ -104,7 +104,7 @@ namespace K4Arenas
 			}
 			else
 			{
-				arenaPlayer.ArenaTag = $"{plugin.Localizer["k4.general.waiting"]} |";
+				arenaPlayer.ArenaTag = $"{plugin.Localizer["alerena.general.waiting"]} |";
 
 				if (!plugin.Config.CompatibilitySettings.DisableClantags)
 				{

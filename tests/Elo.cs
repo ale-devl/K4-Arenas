@@ -1,9 +1,9 @@
 // Run: dotnet run tests/Elo.cs
 #:package CounterStrikeSharp.API@1.0.374
-#:project ../src-plugin/K4-Arenas.csproj
+#:project ../src-plugin/alerena.csproj
 #:property PublishAot=false
 
-using K4Arenas.Models;
+using Alerena.Models;
 
 int failures = 0;
 void Check(string name, bool ok)

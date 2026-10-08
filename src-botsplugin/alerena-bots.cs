@@ -4,21 +4,21 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes;
 using CounterStrikeSharp.API.Core.Capabilities;
 using CounterStrikeSharp.API.Modules.Cvars;
-using K4ArenaSharedApi;
+using AlerenaApi;
 using Microsoft.Extensions.Logging;
 
-namespace K4ArenaBots;
+namespace AlerenaBots;
 
 [MinimumApiVersion(374)]
 public class Plugin : BasePlugin
 {
-	public override string ModuleName => "K4-Arenas Addon - Bots Support";
+	public override string ModuleName => "alerena Addon - Bots Support";
 	public override string ModuleDescription => "Adds a bot in empty arena if there is no opponent.";
 	public override string ModuleAuthor => "Cruze";
 	public override string ModuleVersion => "1.0.0";
 
-	public static PluginCapability<IK4ArenaSharedApi> Capability_SharedAPI { get; } = new("k4-arenas:sharedapi");
-	public static IK4ArenaSharedApi? SharedAPI_Arena { get; private set; } = null;
+	public static PluginCapability<IAlerenaApi> Capability_SharedAPI { get; } = new("alerena:api");
+	public static IAlerenaApi? SharedAPI_Arena { get; private set; } = null;
 
 	private CCSGameRules? gameRules = null;
 	private string botQuotaMode = "normal";
@@ -157,7 +157,7 @@ public class Plugin : BasePlugin
 		// If bot_quota 0 exists in gameconfig.cfg, unlimited round restart will be there so we need to delete it & create a fresh config without it.
 		// Creating of new file is handled by main plugin with the update.
 
-		string filePath = Path.Combine(Server.GameDirectory, "csgo/addons/counterstrikesharp/plugins", "K4-Arenas", "gameconfig.cfg");
+		string filePath = Path.Combine(Server.GameDirectory, "csgo/addons/counterstrikesharp/plugins", "alerena", "gameconfig.cfg");
 
 		if(File.Exists(filePath))
 		{

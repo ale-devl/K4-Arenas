@@ -1,4 +1,4 @@
-namespace K4Arenas.Models;
+namespace Alerena.Models;
 
 // Session memory for rotation matchmaking: who met whom, who each player faced last, who sat out
 public sealed class MatchHistory

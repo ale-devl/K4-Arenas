@@ -1,14 +1,14 @@
 // Run: dotnet run tests/PlayerStore.cs
 // Exercises the SQLite preference store against a real database file.
 #:package CounterStrikeSharp.API@1.0.374
-#:project ../src-plugin/K4-Arenas.csproj
+#:project ../src-plugin/alerena.csproj
 // Dapper maps rows with reflection, which AOT (the default for file-based apps) disables
 #:property PublishAot=false
 
 using CounterStrikeSharp.API.Modules.Entities.Constants;
 using Dapper;
-using K4Arenas;
-using K4ArenaSharedApi;
+using Alerena;
+using AlerenaApi;
 using Microsoft.Data.Sqlite;
 
 int failures = 0;
@@ -18,8 +18,8 @@ void Check(string name, bool ok)
 	if (!ok) failures++;
 }
 
-string dir = Path.Combine(Path.GetTempPath(), $"k4-arenas-test-{Guid.NewGuid():N}");
-string db = Path.Combine(dir, "k4-arenas.db");
+string dir = Path.Combine(Path.GetTempPath(), $"alerena-test-{Guid.NewGuid():N}");
+string db = Path.Combine(dir, "alerena.db");
 const ulong Alice = 76561198000000001, Bob = 76561198000000002;
 
 try
@@ -36,12 +36,12 @@ try
 
 	await PlayerStore.SaveAsync(db, Alice, new(
 		new() { [WeaponType.Rifle] = CsItem.M4A1S, [WeaponType.Pistol] = null },
-		new() { ["k4.rounds.knife"] = true, ["k4.rounds.awp"] = false }));
+		new() { ["alerena.rounds.knife"] = true, ["alerena.rounds.awp"] = false }));
 	PlayerStore.Preferences saved = await PlayerStore.LoadAsync(db, Alice);
 	Check("weapon choice round-trips", saved.Weapons.GetValueOrDefault(WeaponType.Rifle) == CsItem.M4A1S);
 	Check("\"Random\" (null) round-trips", saved.Weapons.ContainsKey(WeaponType.Pistol) && saved.Weapons[WeaponType.Pistol] is null);
 	Check("untouched weapon types stay unset", !saved.Weapons.ContainsKey(WeaponType.Sniper));
-	Check("round toggles round-trip by name", saved.Rounds["k4.rounds.knife"] && !saved.Rounds["k4.rounds.awp"]);
+	Check("round toggles round-trip by name", saved.Rounds["alerena.rounds.knife"] && !saved.Rounds["alerena.rounds.awp"]);
 
 	Check("no rating before the first rated duel", await PlayerStore.LoadRatingAsync(db, Alice) is null);
 	await PlayerStore.SaveRatingAsync(db, Alice, "Alice", 1016, 1);

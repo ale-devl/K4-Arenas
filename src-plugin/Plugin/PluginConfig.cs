@@ -1,8 +1,8 @@
-namespace K4Arenas
+namespace Alerena
 {
 	using CounterStrikeSharp.API.Core;
-	using K4Arenas.Models;
-	using K4ArenaSharedApi;
+	using Alerena.Models;
+	using AlerenaApi;
 	using System.Text.Json;
 	using System.Text.Json.Serialization;
 
@@ -35,7 +35,7 @@ namespace K4Arenas
 		public List<RoundTypeReader> RoundSettings { get; set; } =
 		[
 			new() {
-				TranslationName = "k4.rounds.rifle",
+				TranslationName = "alerena.rounds.rifle",
 				TeamSize = 1,
 				UsePreferredPrimary = true,
 				UsePreferredSecondary = true,
@@ -44,7 +44,7 @@ namespace K4Arenas
 				Helmet = true
 			},
 			new() {
-				TranslationName = "k4.rounds.sniper",
+				TranslationName = "alerena.rounds.sniper",
 				TeamSize = 1,
 				UsePreferredPrimary = true,
 				UsePreferredSecondary = true,
@@ -53,7 +53,7 @@ namespace K4Arenas
 				Helmet = true
 			},
 			new() {
-				TranslationName = "k4.rounds.shotgun",
+				TranslationName = "alerena.rounds.shotgun",
 				TeamSize = 1,
 				UsePreferredPrimary = true,
 				UsePreferredSecondary = true,
@@ -62,14 +62,14 @@ namespace K4Arenas
 				Helmet = true
 			},
 			new() {
-				TranslationName = "k4.rounds.pistol",
+				TranslationName = "alerena.rounds.pistol",
 				TeamSize = 1,
 				UsePreferredSecondary = true,
 				Armor = true,
 				Helmet = true
 			},
 			new() {
-				TranslationName = "k4.rounds.scout",
+				TranslationName = "alerena.rounds.scout",
 				TeamSize = 1,
 				PrimaryWeapon = "weapon_ssg08",
 				UsePreferredSecondary = true,
@@ -77,7 +77,7 @@ namespace K4Arenas
 				Helmet = true
 			},
 			new() {
-				TranslationName = "k4.rounds.awp",
+				TranslationName = "alerena.rounds.awp",
 				TeamSize = 1,
 				PrimaryWeapon = "weapon_awp",
 				UsePreferredSecondary = true,
@@ -85,14 +85,14 @@ namespace K4Arenas
 				Helmet = true
 			},
 			new() {
-				TranslationName = "k4.rounds.deagle",
+				TranslationName = "alerena.rounds.deagle",
 				TeamSize = 1,
 				SecondaryWeapon = "weapon_deagle",
 				Armor = false,
 				Helmet = false
 			},
 			new() {
-				TranslationName = "k4.rounds.smg",
+				TranslationName = "alerena.rounds.smg",
 				TeamSize = 1,
 				UsePreferredPrimary = true,
 				UsePreferredSecondary = true,
@@ -101,7 +101,7 @@ namespace K4Arenas
 				Helmet = true
 			},
 			new() {
-				TranslationName = "k4.rounds.lmg",
+				TranslationName = "alerena.rounds.lmg",
 				TeamSize = 1,
 				UsePreferredPrimary = true,
 				UsePreferredSecondary = true,
@@ -110,7 +110,7 @@ namespace K4Arenas
 				Helmet = true
 			},
 			new() {
-				TranslationName = "k4.rounds.2vs2",
+				TranslationName = "alerena.rounds.2vs2",
 				TeamSize = 2,
 				UsePreferredPrimary = true,
 				UsePreferredSecondary = true,
@@ -120,7 +120,7 @@ namespace K4Arenas
 				EnabledByDefault = false
 			},
 			new() {
-				TranslationName = "k4.rounds.3vs3",
+				TranslationName = "alerena.rounds.3vs3",
 				TeamSize = 3,
 				UsePreferredPrimary = true,
 				UsePreferredSecondary = true,
@@ -130,7 +130,7 @@ namespace K4Arenas
 				EnabledByDefault = false
 			},
 			new() {
-				TranslationName = "k4.rounds.knife",
+				TranslationName = "alerena.rounds.knife",
 				TeamSize = 1,
 				Armor = false,
 				Helmet = false
@@ -294,7 +294,7 @@ namespace K4Arenas
 		public string? DefaultPistol { get; set; } = null;
 
 		[JsonPropertyName("default-round")]
-		public string? DefaultRound { get; set; } = "k4.rounds.rifle";
+		public string? DefaultRound { get; set; } = "alerena.rounds.rifle";
 	}
 
 	public sealed class DatabaseSettings : ConfigSection

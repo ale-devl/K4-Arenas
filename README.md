@@ -1,121 +1,104 @@
-# K4-Arenas (friend-group fork)
+# alerena
 
-A 1v1 arena gamemode for Counter-Strike 2, built for a regular group of friends on a private server. Everyone faces everyone, a visible Elo gives you something to play for, and nothing needs an external service.
+**1v1 arenas for Counter-Strike 2, built for a group of friends.** Everyone faces everyone, an Elo rating gives you something to play for, and it all runs from one plugin folder: no database server, no web services.
 
-This is a fork of [K4-Arenas](https://github.com/KitsuneLab-Development/K4-Arenas) by K4ryuu / KitsuneLab, which is archived. The roadmap and backlog live in [issue #10](https://github.com/ale-devl/K4-Arenas/issues/10).
+```
+round 1   Alex vs Sam     Kim vs Jo     Max vs Lee
+round 2   Alex vs Kim     Sam vs Max    Jo vs Lee      ← nobody gets the same opponent twice in a row
+...       after 5 rounds with 6 players, usually everyone has met everyone once
+
+chat      [alerena] Elo +14 → 1047
+```
 
 ## Features
 
-- **Arenas on any map.** Spawn points are grouped into arenas automatically.
-- **Rotation matchmaking.** Each round you face the opponent you've met least this session, never the same one twice in a row when it can be avoided. With an odd player count, sitting out (or facing a bot) rotates fairly. The classic winner-up / loser-down ladder is still available.
-- **Elo, for show.** Shown on the scoreboard and after every duel (`Elo +14 → 1047`), with `!top` for the ranking. It never affects who you play against.
-- **Your loadout.** `!guns` picks your weapon per category, `!rounds` picks which round types you want.
-- **In-game settings.** `!arenaconfig` for admins: no JSON editing, no restart.
-- **Plugin-local storage.** One SQLite file next to the config, no database server.
-- 2v2 / 3v3 rounds, challenges (`!duel`), AFK handling, bot support, and a plugin API for custom rounds.
+- **Rotation matchmaking.** Each round you face whoever you've played least this session. Sitting out (or facing a bot) rotates fairly with odd player counts.
+- **Elo, just for show.** It's on the scoreboard and in chat after every duel, and `!top` shows the ranking. It never changes who you play.
+- **Your loadout.** `!guns` sets your weapon per category, `!rounds` picks which round types you want.
+- **Settings in-game.** Admins use `!arenaconfig`: no file editing, no restart.
+- **Works on any map.** Spawn points are grouped into arenas automatically. Also included: 2v2 / 3v3 rounds, `!duel` challenges, AFK handling, optional bots.
 
-## Requirements
+## Install
 
-- A CS2 dedicated server with [Metamod:Source](https://www.sourcemm.net/)
-- [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp/releases) **1.0.374 or newer**, using the `with-runtime` package (it brings .NET 10)
+You need a CS2 dedicated server with [Metamod:Source](https://www.sourcemm.net/) and [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp/releases) **1.0.374 or newer** (the `with-runtime` package).
 
-The menu plugins ([CSSUniversalMenuAPI](https://github.com/CSGALS/CSSUniversalMenuAPI) and [SharpModMenu](https://github.com/CSGALS/SharpModMenu)) are included in the release zip.
+1. Download `alerena.zip` from the [releases](https://github.com/ale-devl/alerena/releases)
+2. Extract it into `game/csgo/addons/counterstrikesharp/`
+3. Restart the server
 
-## Install and update
+That's all: the menu plugins ([CSSUniversalMenuAPI](https://github.com/CSGALS/CSSUniversalMenuAPI) and [SharpModMenu](https://github.com/CSGALS/SharpModMenu)) are in the zip. `alerena-bots.zip` is optional: it gives a bot to anyone without an opponent.
 
-1. Download `K4-Arenas.zip` from the [latest release](https://github.com/ale-devl/K4-Arenas/releases). `K4-Arenas-Bots.zip` is optional: it adds a bot to any arena where a player has no opponent.
-2. Extract it into `game/csgo/addons/counterstrikesharp/`.
-3. Restart the server.
+**Updating:** extract the new zip over the old one. Your `alerena.json` and `alerena.db` are never touched.
 
-Updating works the same way. Your `K4-Arenas.json` and the database are never overwritten; only the template next to them is.
+**Coming from K4-Arenas:** delete `plugins/K4-Arenas`, `plugins/K4-Arenas-Bots` and `shared/K4-ArenaSharedApi` first, so both plugins don't run at once. Old K4-Arenas addons need rebuilding against `alerena-api` before they connect.
 
-Versions: `3.0.0-alpha.N` and `-beta.N` are test builds, published as prereleases. `3.0.0` is the first release that has been tested on a live server.
+**Versions:** `-alpha` and `-beta` releases are untested builds. A plain version like `3.0.0` has been played on a live server.
 
 ## Commands
 
-| Command | What it does |
+| Command | |
 |---|---|
-| `!guns` | Weapon preferences: pick a weapon per category, or Random |
+| `!guns` | Pick your weapon per category, or Random |
 | `!rounds` | Turn round types on or off for yourself |
-| `!top`, `!elo` | Best 10 players by Elo, plus your own rating |
-| `!duel <name>`, `!challenge <name>` | Challenge a player to a 1v1 next round |
-| `!caccept`, `!cdecline` | Answer a challenge |
+| `!top` / `!elo` | Best 10 by Elo, plus your own rating |
+| `!duel <name>` / `!challenge <name>` | Challenge someone for next round; they answer with `!caccept` or `!cdecline` |
 | `!afk` | Sit out until you use it again |
-| `!queue` | Your position in the waiting queue |
-| `!arenaconfig` | Admins (`@css/config`): arena settings menu |
+| `!queue` | Your place in the waiting queue |
+| `!arenaconfig` | Admins (`@css/config`): the settings menu |
 
-All command names can be changed in `command-settings`.
+**Menus:** W/S to move, E to select, A to go back, R to exit. You can't move while a menu is open. If you prefer number keys, bind `bind 1 "slot1;css_1"` … `bind 0 "slot0;css_0"`.
 
-**Menu controls (SharpModMenu):** W/S move, E select, A back, R exit. You can't move while a menu is open. If you bind `bind 1 "slot1;css_1"` up to `bind 0 "slot0;css_0"`, you get classic number-key menus instead.
+## How it plays
 
-## How matches are made
-
-- **Rotation (default):** players are paired with whoever they've faced least since the server was last empty. With 6 players, 5 rounds are usually a complete round-robin.
-- **Ladder:** the original K4-Arenas system. Arena 1 is the top; winners move up an arena, losers move down.
-- **Round type:** picked at random from the rounds both players have enabled. If they share none, the `default-round` is used.
-
-**Elo** starts at 1000 with a K-factor of 32 (both configurable):
-- Beating a stronger player earns more.
-- A draw counts as half a win.
-- Team rounds compare team averages.
-- Challenges count. Warmup, bots and sitting out don't.
+- **Matchmaking:** `rotation` (default) pairs least-met opponents. `ladder` is the classic system: arena 1 is the top, winners move up, losers move down.
+- **Round type:** a random pick from the rounds both players have on. If they share none, the `default-round` is used.
+- **Elo:** start 1000, K-factor 32.
+  - Beating a stronger player earns more, and a draw counts as half a win.
+  - Team rounds compare averages.
+  - Challenges count. Warmup and bots don't.
 
 ## Configuration
 
-| File | Purpose |
+Everything lives in `addons/counterstrikesharp/configs/plugins/alerena/`:
+
+| File | |
 |---|---|
-| `addons/counterstrikesharp/configs/plugins/K4-Arenas/K4-Arenas.json` | Plugin settings |
-| `.../configs/plugins/K4-Arenas/K4-Arenas.example.json` | Template, copied to `K4-Arenas.json` when that file doesn't exist |
-| `.../configs/plugins/K4-Arenas/k4-arenas.db` | Player preferences and Elo |
-| `.../plugins/K4-Arenas/gameconfig.cfg` | Server cvars applied at every map start |
+| `alerena.json` | Settings. Delete it to start over from the template |
+| `alerena.example.json` | The template, used when `alerena.json` doesn't exist |
+| `alerena.db` | Preferences and Elo |
 
-**Behavior:**
-- **To start over,** delete `K4-Arenas.json` and restart. It's recreated from the template.
-- **Missing keys** fall back to built-in defaults.
-- **At startup,** the console names every key or value that is ignored (typos, unknown weapons) and logs which config folder was loaded.
-- **The config folder is named after the plugin folder.** Renaming `plugins/K4-Arenas` also changes where the config is read from.
-- **A `K4-Arenas.toml`** in the same folder takes priority over the `.json`.
+`gameconfig.cfg` in the plugin folder holds server cvars and is applied at every map start. Put `mp_*` changes there, not in `server.cfg`.
 
-**Format gotchas:**
-- Entries inside `round-settings` use **PascalCase** keys (`TranslationName`, `PrimaryWeapon`). Everything else uses kebab-case.
-- Weapons need the `weapon_` prefix: `weapon_ak47`, `weapon_awp`, `weapon_usp_silencer`.
-- A round with `"PrimaryWeapon": null` and `"UsePreferredPrimary": true` gives each player their own choice from `!guns`. If they haven't picked one, they get the matching `default-*` weapon. A fixed `PrimaryWeapon` always overrides the player's choice.
-- When `use-predefined-config` is on, `gameconfig.cfg` re-applies its cvars at every map start. Put `mp_*` changes there, not in `server.cfg`.
+**Watch out for:**
+- Round entries in `round-settings` use **PascalCase** keys (`PrimaryWeapon`). Everything else uses kebab-case (`prevent-draw-rounds`).
+- Weapons need the `weapon_` prefix: `weapon_ak47`, `weapon_usp_silencer`.
+- `"PrimaryWeapon": null` with `"UsePreferredPrimary": true` means each player's own `!guns` choice. If they haven't picked one, they get the `default-*` weapon. A fixed weapon overrides everyone's choice.
+- At startup the console names every ignored key or unknown weapon, and logs which config was loaded.
 
-### Settings
-
-| Key | Default | Meaning |
+| Setting | Default | |
 |---|---|---|
 | `matchmaking` | `rotation` | `rotation` or `ladder` |
-| `use-predefined-config` | `true` | Apply `gameconfig.cfg` at every map start |
-| `database-settings.table-purge-days` | `0` | Delete players not seen for this many days. `0` keeps them forever |
-| `round-settings` | 12 rounds | Round types. Per entry: `TranslationName`, `TeamSize`, `PrimaryWeapon`, `SecondaryWeapon`, `UsePreferredPrimary`, `PrimaryPreference` (`Rifle`, `Sniper`, `SMG`, `LMG`, `Shotgun`, `Pistol`, or `Unknown` = random), `UsePreferredSecondary`, `Armor`, `Helmet`, `EnabledByDefault` |
-| `default-weapon-settings.default-*` | template: AK-47, AWP, Deagle | Weapon used until a player picks one. `null` = random |
-| `default-weapon-settings.default-round` | `k4.rounds.rifle` | Round used when two players share no enabled round |
-| `elo-settings.k-factor` / `start-rating` | `32` / `1000` | Elo tuning |
-| `compatibility-settings.prevent-draw-rounds` | `true` | Pick a random winning team instead of a draw when alive counts are equal |
-| `compatibility-settings.block-damage-of-not-opponent` | template: `true` | Undo damage from other arenas. A single lethal hit still kills |
-| `compatibility-settings.block-flash-of-not-opponent` | template: `true` | Ignore flashes from other arenas |
-| `compatibility-settings.give-knife-by-default` | `true` | Everyone gets a knife |
-| `compatibility-settings.force-arena-clantags` | `false` | Re-apply the arena clan tag every second, for when another plugin overwrites it |
-| `compatibility-settings.disable-clantags` | `false` | Never touch players' clan tags |
-| `allowed-weapon-prefs.*` | `true` | Which categories appear in `!guns` |
-| `command-settings.*` | see Commands | Command names. `center-announce-mode` announces arena, opponent and round type at round start (center screen and chat); `false` turns the announcement off |
+| `round-settings` | 12 rounds | Per round: `TranslationName`, `TeamSize`, `PrimaryWeapon`, `SecondaryWeapon`, `UsePreferredPrimary`, `PrimaryPreference` (`Rifle`, `Sniper`, `SMG`, `LMG`, `Shotgun`, `Pistol`, `Unknown` = random), `UsePreferredSecondary`, `Armor`, `Helmet`, `EnabledByDefault` |
+| `default-weapon-settings` | AK-47, AWP, Deagle | `default-rifle` … `default-pistol` until a player picks; `default-round` when two players share no round |
+| `elo-settings` | `32` / `1000` | `k-factor` and `start-rating` |
+| `compatibility-settings` | | `prevent-draw-rounds` (random winner instead of a draw), `block-damage-of-not-opponent` (a single lethal hit still kills), `block-flash-of-not-opponent`, `give-knife-by-default`, `force-arena-clantags`, `disable-clantags` |
+| `allowed-weapon-prefs` | all `true` | Categories shown in `!guns` |
+| `command-settings` | see Commands | Command names. `center-announce-mode: false` turns off the round-start announcement |
+| `database-settings.table-purge-days` | `0` | Forget players not seen for this many days. `0` keeps them forever |
+| `use-predefined-config` | `true` | Apply `gameconfig.cfg` at map start |
 
 ## Development
 
 ```sh
-dotnet publish src-plugin/K4-Arenas.csproj -c Release   # → src-plugin/bin/K4-Arenas/
-dotnet run tests/ConfigParsing.cs                       # each tests/*.cs is a standalone check
+dotnet publish src-plugin/alerena.csproj -c Release   # → src-plugin/bin/alerena/
+dotnet run tests/Rotation.cs                          # every tests/*.cs is a standalone check
 ```
 
-You need the .NET 10 SDK. Every pull request is built by CI. CI runs all `tests/*.cs`, bundles the menu plugins, and publishes a prerelease named after the plugin version (`ModuleVersion` in `src-plugin/Plugin/PluginManifest.cs`), so bump that version in every PR.
-
-Other plugins can add round types and query arena state through the shared API (`src-shared/K4-ArenaSharedApi.cs`, capability `k4-arenas:sharedapi`). `src-plugin/K4-Arenas-Example.cs` shows a custom round.
+- **You need** the .NET 10 SDK.
+- **Every pull request** is built and tested by CI, which publishes a prerelease named after `ModuleVersion` in `src-plugin/Plugin/PluginManifest.cs`. Bump that version in every PR.
+- **The backlog** is in the [issues](https://github.com/ale-devl/alerena/issues), with the roadmap in #10.
+- **Addons** can add round types through `alerena-api` (capability `alerena:api`). See `src-plugin/AddonExample.cs`.
 
 ## Credits and license
 
-- Original plugin: [K4ryuu / KitsuneLab](https://github.com/KitsuneLab-Development/K4-Arenas), with community contributors.
-- Menus: CSSUniversalMenuAPI and SharpModMenu by [CS:GALS](https://github.com/CSGALS) (MIT, licenses included in the release).
-
-Distributed under the GPL-3.0 license. See [`LICENSE.md`](LICENSE.md).
+alerena started as a fork of [K4-Arenas](https://github.com/KitsuneLab-Development/K4-Arenas) by K4ryuu / KitsuneLab and its contributors, and stays under the same **GPL-3.0** license ([`LICENSE.md`](LICENSE.md)). The bots addon is by Cruze. The menus come from [CS:GALS](https://github.com/CSGALS) (MIT, licenses included in the release).

@@ -48,13 +48,13 @@ jobs:
 
       - name: Publish
         run: |
-          dotnet publish src-plugin/K4-Arenas.csproj -c Release
-          dotnet publish src-botsplugin/K4-Arenas-Bots.csproj -c Release
+          dotnet publish src-plugin/alerena.csproj -c Release
+          dotnet publish src-botsplugin/alerena-bots.csproj -c Release
 
       # The in-game menus need CSSUniversalMenuAPI plus a driver; ship pinned releases so one zip installs everything
       - name: Bundle menu plugins
         run: |
-          OUT=src-plugin/bin/K4-Arenas
+          OUT=src-plugin/bin/alerena
           bundle() { # repo tag zip folder-in-zip
             gh release download "$2" --repo "CSGALS/$1" --pattern "$3" --dir menus
             unzip -q -o "menus/$3" -d menus/out
@@ -69,8 +69,8 @@ jobs:
 
       - name: Zip
         run: |
-          (cd src-plugin/bin/K4-Arenas && zip -qr "$GITHUB_WORKSPACE/K4-Arenas.zip" .)
-          (cd src-botsplugin/bin/K4-Arenas-Bots && zip -qr "$GITHUB_WORKSPACE/K4-Arenas-Bots.zip" .)
+          (cd src-plugin/bin/alerena && zip -qr "$GITHUB_WORKSPACE/alerena.zip" .)
+          (cd src-botsplugin/bin/alerena-bots && zip -qr "$GITHUB_WORKSPACE/alerena-bots.zip" .)
 
       - name: Release
         env:
@@ -78,10 +78,10 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           gh release delete "$TAG" --cleanup-tag --yes 2>/dev/null || true
-          gh release create "$TAG" K4-Arenas.zip K4-Arenas-Bots.zip \
+          gh release create "$TAG" alerena.zip alerena-bots.zip \
             --prerelease --target "$SHA" \
             --title "$TAG: $PR_TITLE" \
-            --notes "Extract into \`addons/counterstrikesharp/\` on the server. K4-Arenas-Bots.zip is optional.
+            --notes "Extract into \`addons/counterstrikesharp/\` on the server. alerena-bots.zip is optional.
 
           Test build of ${SHA::7} from #$PR."
 

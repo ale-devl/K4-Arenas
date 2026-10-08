@@ -1,11 +1,11 @@
 
-namespace K4Arenas
+namespace Alerena
 {
 	using CounterStrikeSharp.API;
 	using CounterStrikeSharp.API.Core;
 	using CounterStrikeSharp.API.Modules.Utils;
 	using CounterStrikeSharp.API.Modules.Commands;
-	using K4Arenas.Models;
+	using Alerena.Models;
 	using CounterStrikeSharp.API.Modules.Admin;
 	using System.Data;
 	using CounterStrikeSharp.API.Modules.Entities.Constants;
@@ -94,7 +94,7 @@ namespace K4Arenas
 				ArenaPlayer arenaPlayer = new ArenaPlayer(this, playerController);
 				WaitingArenaPlayers.Enqueue(arenaPlayer);
 
-				arenaPlayer.ArenaTag = $"{Localizer[gameRules?.WarmupPeriod == true ? "k4.general.warmup" : "k4.general.waiting"]} |";
+				arenaPlayer.ArenaTag = $"{Localizer[gameRules?.WarmupPeriod == true ? "alerena.general.warmup" : "alerena.general.waiting"]} |";
 
 				if (!Config.CompatibilitySettings.DisableClantags)
 				{
@@ -104,10 +104,10 @@ namespace K4Arenas
 
 				if (!arenaPlayer.Controller.IsBot)
 				{
-					arenaPlayer.Controller.PrintToChat($" {Localizer.ForPlayer(playerController, "k4.general.prefix")} {Localizer.ForPlayer(playerController, "k4.chat.queue_added", WaitingArenaPlayers.Count)}");
-					arenaPlayer.Controller.PrintToChat($" {Localizer.ForPlayer(playerController, "k4.general.prefix")} {Localizer.ForPlayer(playerController, "k4.chat.arena_afk", Config.CommandSettings.AFKCommands.FirstOrDefault() ?? "Missing")}");
+					arenaPlayer.Controller.PrintToChat($" {Localizer.ForPlayer(playerController, "alerena.general.prefix")} {Localizer.ForPlayer(playerController, "alerena.chat.queue_added", WaitingArenaPlayers.Count)}");
+					arenaPlayer.Controller.PrintToChat($" {Localizer.ForPlayer(playerController, "alerena.general.prefix")} {Localizer.ForPlayer(playerController, "alerena.chat.arena_afk", Config.CommandSettings.AFKCommands.FirstOrDefault() ?? "Missing")}");
 
-					arenaPlayer.Controller.PrintToChat($" {Localizer.ForPlayer(playerController, "k4.general.prefix")} {Localizer.ForPlayer(playerController, "k4.chat.arena_commands", Config.CommandSettings.GunsCommands.FirstOrDefault() ?? "Missing", Config.CommandSettings.RoundsCommands.FirstOrDefault() ?? "Missing")}");
+					arenaPlayer.Controller.PrintToChat($" {Localizer.ForPlayer(playerController, "alerena.general.prefix")} {Localizer.ForPlayer(playerController, "alerena.chat.arena_commands", Config.CommandSettings.GunsCommands.FirstOrDefault() ?? "Missing", Config.CommandSettings.RoundsCommands.FirstOrDefault() ?? "Missing")}");
 
 					ulong steamID = playerController.SteamID;
 					Task.Run(() => LoadPlayerAsync(steamID));
@@ -139,14 +139,14 @@ namespace K4Arenas
 				case CommandUsage.CLIENT_ONLY:
 					if (player == null || !player.IsValid || player.PlayerPawn.Value == null)
 					{
-						info.ReplyToCommand($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, "k4.general.commandclientonly")}");
+						info.ReplyToCommand($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, "alerena.general.commandclientonly")}");
 						return false;
 					}
 					break;
 				case CommandUsage.SERVER_ONLY:
 					if (player != null)
 					{
-						info.ReplyToCommand($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, "k4.general.commandserveronly")}");
+						info.ReplyToCommand($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, "alerena.general.commandserveronly")}");
 						return false;
 					}
 					break;
@@ -160,7 +160,7 @@ namespace K4Arenas
 			{
 				if (player != null && !AdminManager.PlayerHasPermissions(player, permission))
 				{
-					info.ReplyToCommand($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, "k4.general.commandnoperm")}");
+					info.ReplyToCommand($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, "alerena.general.commandnoperm")}");
 					return false;
 				}
 			}
@@ -170,7 +170,7 @@ namespace K4Arenas
 				int checkArgCount = argCount + 1;
 				if (info.ArgCount < checkArgCount)
 				{
-					info.ReplyToCommand($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, "k4.general.commandhelp", info.ArgByIndex(0).Replace("css_", string.Empty), help)}");
+					info.ReplyToCommand($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, "alerena.general.commandhelp", info.ArgByIndex(0).Replace("css_", string.Empty), help)}");
 					return false;
 				}
 			}
@@ -248,9 +248,9 @@ namespace K4Arenas
 		public string GetOpponentNames(CCSPlayerController player, List<ArenaPlayer>? opponents)
 		{
 			if (opponents is null || opponents.Count == 0)
-				return Localizer.ForPlayer(player, "k4.general.no_opponent");
+				return Localizer.ForPlayer(player, "alerena.general.no_opponent");
 
-			return string.Join(", ", opponents.Where(p => p.IsValid).Select(p => p.Controller.IsBot && !string.IsNullOrEmpty(GetArenaName(p.Controller)) ? $"{Localizer["k4.general.bot"]} " + p.Controller.PlayerName.Replace(GetArenaName(p.Controller), "").Replace("|", "") : p.Controller.PlayerName));
+			return string.Join(", ", opponents.Where(p => p.IsValid).Select(p => p.Controller.IsBot && !string.IsNullOrEmpty(GetArenaName(p.Controller)) ? $"{Localizer["alerena.general.bot"]} " + p.Controller.PlayerName.Replace(GetArenaName(p.Controller), "").Replace("|", "") : p.Controller.PlayerName));
 		}
 
 		public string GetArenaName(CCSPlayerController player)
@@ -294,7 +294,7 @@ namespace K4Arenas
 				return GetRequiredTag(arena.ArenaID);
 
 			if (WaitingArenaPlayers.Any(p => p.Controller == player))
-				return Localizer["k4.general.waiting"];
+				return Localizer["alerena.general.waiting"];
 
 			return null;
 		}
@@ -302,16 +302,16 @@ namespace K4Arenas
 		public string GetRequiredTag(int arenaID) =>
 			arenaID switch
 			{
-				-2 => $"{Localizer["k4.general.challenge"]} |",
-				-1 => $"{Localizer["k4.general.warmup"]} |",
-				_ => $"{Localizer["k4.general.arena"]} {arenaID} |",
+				-2 => $"{Localizer["alerena.general.challenge"]} |",
+				-1 => $"{Localizer["alerena.general.warmup"]} |",
+				_ => $"{Localizer["alerena.general.arena"]} {arenaID} |",
 			};
 
 		public string GetRequiredArenaName(int arenaID) =>
 			arenaID switch
 			{
-				-2 => Localizer["k4.general.challenge"],
-				-1 => Localizer["k4.general.warmup"],
+				-2 => Localizer["alerena.general.challenge"],
+				-1 => Localizer["alerena.general.warmup"],
 				_ => $"{arenaID}"
 			};
 
@@ -323,7 +323,7 @@ namespace K4Arenas
 			{
 				foreach (var player in players)
 				{
-					player.PrintToChat($" {Localizer.ForPlayer(player, "k4.general.prefix")} {Localizer.ForPlayer(player, key, args)}");
+					player.PrintToChat($" {Localizer.ForPlayer(player, "alerena.general.prefix")} {Localizer.ForPlayer(player, key, args)}");
 				}
 			}
 		}

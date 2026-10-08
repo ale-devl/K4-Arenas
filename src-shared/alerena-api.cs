@@ -1,7 +1,7 @@
 ﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
 
-namespace K4ArenaSharedApi
+namespace AlerenaApi
 {
 	public enum WeaponType
 	{
@@ -14,7 +14,7 @@ namespace K4ArenaSharedApi
 		Unknown
 	}
 
-	public interface IK4ArenaSharedApi
+	public interface IAlerenaApi
 	{
 		public int AddSpecialRound(string name, int teamSize, bool enabledByDefault, Action<List<CCSPlayerController>?, List<CCSPlayerController>?> startFunction, Action<List<CCSPlayerController>?, List<CCSPlayerController>?> endFunction);
 		public void RemoveSpecialRound(int id);

@@ -2,23 +2,23 @@
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes;
 using CounterStrikeSharp.API.Core.Capabilities;
-using K4ArenaSharedApi;
+using AlerenaApi;
 using Microsoft.Extensions.Logging;
 
-namespace K4ArenaRoundExample;
+namespace AlerenaRoundExample;
 
 [MinimumApiVersion(205)]
-public class PluginK4ArenaRoundExample : BasePlugin
+public class PluginAlerenaRoundExample : BasePlugin
 {
 	public static int RoundTypeID { get; private set; } = -1;
-	public override string ModuleName => "K4-Arenas Addon - NameOfRound";
+	public override string ModuleName => "alerena Addon - NameOfRound";
 	public override string ModuleAuthor => "YourNameHere";
 	public override string ModuleVersion => "1.0.0";
 
-	public static PluginCapability<IK4ArenaSharedApi> Capability_SharedAPI { get; } = new("k4-arenas:sharedapi");
+	public static PluginCapability<IAlerenaApi> Capability_SharedAPI { get; } = new("alerena:api");
 	public override void OnAllPluginsLoaded(bool hotReload)
 	{
-		IK4ArenaSharedApi? checkAPI = Capability_SharedAPI.Get();
+		IAlerenaApi? checkAPI = Capability_SharedAPI.Get();
 
 		if (checkAPI != null)
 		{
@@ -27,12 +27,12 @@ public class PluginK4ArenaRoundExample : BasePlugin
 			RoundTypeID = checkAPI.AddSpecialRound("NameOfRound", 1, false, RoundStart, RoundEnd);
 		}
 		else
-			Logger.LogError("Failed to get shared API capability for K4-Arenas.");
+			Logger.LogError("Failed to get shared API capability for alerena.");
 	}
 
 	public override void Unload(bool hotReload)
 	{
-		IK4ArenaSharedApi? checkAPI = Capability_SharedAPI.Get();
+		IAlerenaApi? checkAPI = Capability_SharedAPI.Get();
 
 		if (checkAPI != null)
 		{
@@ -40,7 +40,7 @@ public class PluginK4ArenaRoundExample : BasePlugin
 			checkAPI.RemoveSpecialRound(RoundTypeID);
 		}
 		else
-			Logger.LogError("Failed to get shared API capability for K4-Arenas.");
+			Logger.LogError("Failed to get shared API capability for alerena.");
 	}
 
 	public void RoundStart(List<CCSPlayerController>? team1, List<CCSPlayerController>? team2)
@@ -62,13 +62,13 @@ public class PluginK4ArenaRoundExample : BasePlugin
 	// This section can be copied 1:1 to any Anti-AFK plugin as it is due to it has all required methods with the most stable ways
 	// Compile this plugin with Arenas API, its not required to have it in the server, but it will be used if available
 
-	public static IK4ArenaSharedApi? SharedAPI_Arena { get; private set; }
+	public static IAlerenaApi? SharedAPI_Arena { get; private set; }
 	public (bool ArenaFound, bool Checked) ArenaSupport = (false, false);
 	public void PerformAFKAction(CCSPlayerController player, bool afk)
 	{
 		if (!ArenaSupport.Checked) // We do check only once, so we basically cache the result
 		{
-			string arenaPath = Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "K4-Arenas"));
+			string arenaPath = Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "alerena"));
 			ArenaSupport.ArenaFound = Directory.Exists(arenaPath);
 			ArenaSupport.Checked = true;
 		}
@@ -82,7 +82,7 @@ public class PluginK4ArenaRoundExample : BasePlugin
 		if (SharedAPI_Arena is null)
 		{
 			// This section won't be executed if Arena is not found, so wont cause issues from capability not found
-			PluginCapability<IK4ArenaSharedApi> Capability_SharedAPI = new("k4-arenas:sharedapi");
+			PluginCapability<IAlerenaApi> Capability_SharedAPI = new("alerena:api");
 			SharedAPI_Arena = Capability_SharedAPI.Get();
 		}
 

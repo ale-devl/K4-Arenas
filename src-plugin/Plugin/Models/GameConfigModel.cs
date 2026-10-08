@@ -2,7 +2,7 @@
 using CounterStrikeSharp.API;
 using Microsoft.Extensions.Logging;
 
-namespace K4Arenas.Models;
+namespace Alerena.Models;
 
 public class GameConfig
 {

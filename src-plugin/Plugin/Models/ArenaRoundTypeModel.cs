@@ -2,10 +2,10 @@ using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
-using K4Arenas.Models;
-using K4ArenaSharedApi;
+using Alerena.Models;
+using AlerenaApi;
 
-namespace K4Arenas.Models
+namespace Alerena.Models
 {
 	public sealed class RoundType(string name, int teamSize, CsItem? primary, CsItem? secondary, bool usePreferredPrimary = false, WeaponType? primaryPreference = null, bool usePreferredSecondary = false, bool armor = true, bool helmet = true, bool enabledByDefaultAction = true, Action<List<CCSPlayerController>?, List<CCSPlayerController>?>? startFunction = null, Action<List<CCSPlayerController>?, List<CCSPlayerController>?>? endFunction = null)
 	{
@@ -24,18 +24,18 @@ namespace K4Arenas.Models
 		public readonly bool EnabledByDefault = enabledByDefaultAction;
 		public readonly Action<List<CCSPlayerController>?, List<CCSPlayerController>?>? StartFunction = startFunction;
 		public readonly Action<List<CCSPlayerController>?, List<CCSPlayerController>?>? EndFunction = endFunction;
-		public static readonly RoundType Rifle = new("k4.rounds.rifle", 1, null, null, true, WeaponType.Rifle, true);
-		public static readonly RoundType Sniper = new("k4.rounds.sniper", 1, null, null, true, WeaponType.Sniper, true);
-		public static readonly RoundType Shotgun = new("k4.rounds.shotgun", 1, null, null, true, WeaponType.Shotgun, true);
-		public static readonly RoundType Pistol = new("k4.rounds.pistol", 1, null, null, false, null, true);
-		public static readonly RoundType Scout = new("k4.rounds.scout", 1, CsItem.Scout, null, false, null, true);
-		public static readonly RoundType AWP = new("k4.rounds.awp", 1, CsItem.AWP, null, false, null, true);
-		public static readonly RoundType Deagle = new("k4.rounds.deagle", 1, null, CsItem.Deagle, false, null, false);
-		public static readonly RoundType SMG = new("k4.rounds.smg", 1, null, null, true, WeaponType.SMG, true);
-		public static readonly RoundType LMG = new("k4.rounds.lmg", 1, null, null, true, WeaponType.LMG, true);
-		public static readonly RoundType TwoVSTwo = new("k4.rounds.2vs2", 2, null, null, true, WeaponType.Unknown, true);
-		public static readonly RoundType ThreeVSThree = new("k4.rounds.3vs3", 3, null, null, true, WeaponType.Unknown, true);
-		public static readonly RoundType Knife = new("k4.rounds.knife", 1, null, null, false, null, false, false, false);
+		public static readonly RoundType Rifle = new("alerena.rounds.rifle", 1, null, null, true, WeaponType.Rifle, true);
+		public static readonly RoundType Sniper = new("alerena.rounds.sniper", 1, null, null, true, WeaponType.Sniper, true);
+		public static readonly RoundType Shotgun = new("alerena.rounds.shotgun", 1, null, null, true, WeaponType.Shotgun, true);
+		public static readonly RoundType Pistol = new("alerena.rounds.pistol", 1, null, null, false, null, true);
+		public static readonly RoundType Scout = new("alerena.rounds.scout", 1, CsItem.Scout, null, false, null, true);
+		public static readonly RoundType AWP = new("alerena.rounds.awp", 1, CsItem.AWP, null, false, null, true);
+		public static readonly RoundType Deagle = new("alerena.rounds.deagle", 1, null, CsItem.Deagle, false, null, false);
+		public static readonly RoundType SMG = new("alerena.rounds.smg", 1, null, null, true, WeaponType.SMG, true);
+		public static readonly RoundType LMG = new("alerena.rounds.lmg", 1, null, null, true, WeaponType.LMG, true);
+		public static readonly RoundType TwoVSTwo = new("alerena.rounds.2vs2", 2, null, null, true, WeaponType.Unknown, true);
+		public static readonly RoundType ThreeVSThree = new("alerena.rounds.3vs3", 3, null, null, true, WeaponType.Unknown, true);
+		public static readonly RoundType Knife = new("alerena.rounds.knife", 1, null, null, false, null, false, false, false);
 
 		public static List<RoundType> RoundTypes { get; } = [];
 
@@ -107,7 +107,7 @@ namespace K4Arenas.Models
 	}
 }
 
-public class RoundTypeReader : K4Arenas.ConfigSection
+public class RoundTypeReader : Alerena.ConfigSection
 {
 	public string TranslationName { get; set; } = string.Empty;
 	public int TeamSize { get; set; } = 1;

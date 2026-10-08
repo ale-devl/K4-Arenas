@@ -1,5 +1,5 @@
-// Template for K4-Arenas.json: CounterStrikeSharp copies this file when no K4-Arenas.json exists yet.
-// Keys missing from K4-Arenas.json fall back to the defaults in PluginConfig.cs.
+// Template for alerena.json: CounterStrikeSharp copies this file when no alerena.json exists yet.
+// Keys missing from alerena.json fall back to the defaults in PluginConfig.cs.
 {
   "use-predefined-config": true,
   "matchmaking": "rotation",
@@ -45,7 +45,7 @@
   },
   "round-settings": [
     {
-      "TranslationName": "k4.rounds.rifle",
+      "TranslationName": "alerena.rounds.rifle",
       "TeamSize": 1,
       "PrimaryWeapon": null,
       "SecondaryWeapon": null,
@@ -57,7 +57,7 @@
       "EnabledByDefault": true
     },
     {
-      "TranslationName": "k4.rounds.sniper",
+      "TranslationName": "alerena.rounds.sniper",
       "TeamSize": 1,
       "PrimaryWeapon": null,
       "SecondaryWeapon": null,
@@ -69,7 +69,7 @@
       "EnabledByDefault": false
     },
     {
-      "TranslationName": "k4.rounds.shotgun",
+      "TranslationName": "alerena.rounds.shotgun",
       "TeamSize": 1,
       "PrimaryWeapon": null,
       "SecondaryWeapon": null,
@@ -81,7 +81,7 @@
       "EnabledByDefault": false
     },
     {
-      "TranslationName": "k4.rounds.pistol",
+      "TranslationName": "alerena.rounds.pistol",
       "TeamSize": 1,
       "PrimaryWeapon": null,
       "SecondaryWeapon": "weapon_usp_silencer",
@@ -93,7 +93,7 @@
       "EnabledByDefault": true
     },
     {
-      "TranslationName": "k4.rounds.scout",
+      "TranslationName": "alerena.rounds.scout",
       "TeamSize": 1,
       "PrimaryWeapon": "weapon_ssg08",
       "SecondaryWeapon": null,
@@ -105,7 +105,7 @@
       "EnabledByDefault": true
     },
     {
-      "TranslationName": "k4.rounds.awp",
+      "TranslationName": "alerena.rounds.awp",
       "TeamSize": 1,
       "PrimaryWeapon": "weapon_awp",
       "SecondaryWeapon": null,
@@ -117,7 +117,7 @@
       "EnabledByDefault": true
     },
     {
-      "TranslationName": "k4.rounds.deagle",
+      "TranslationName": "alerena.rounds.deagle",
       "TeamSize": 1,
       "PrimaryWeapon": null,
       "SecondaryWeapon": "weapon_deagle",
@@ -129,7 +129,7 @@
       "EnabledByDefault": true
     },
     {
-      "TranslationName": "k4.rounds.smg",
+      "TranslationName": "alerena.rounds.smg",
       "TeamSize": 1,
       "PrimaryWeapon": null,
       "SecondaryWeapon": null,
@@ -141,7 +141,7 @@
       "EnabledByDefault": false
     },
     {
-      "TranslationName": "k4.rounds.lmg",
+      "TranslationName": "alerena.rounds.lmg",
       "TeamSize": 1,
       "PrimaryWeapon": null,
       "SecondaryWeapon": null,
@@ -153,7 +153,7 @@
       "EnabledByDefault": false
     },
     {
-      "TranslationName": "k4.rounds.2vs2",
+      "TranslationName": "alerena.rounds.2vs2",
       "TeamSize": 2,
       "PrimaryWeapon": null,
       "SecondaryWeapon": null,
@@ -165,7 +165,7 @@
       "EnabledByDefault": false
     },
     {
-      "TranslationName": "k4.rounds.3vs3",
+      "TranslationName": "alerena.rounds.3vs3",
       "TeamSize": 3,
       "PrimaryWeapon": null,
       "SecondaryWeapon": null,
@@ -177,7 +177,7 @@
       "EnabledByDefault": false
     },
     {
-      "TranslationName": "k4.rounds.knife",
+      "TranslationName": "alerena.rounds.knife",
       "TeamSize": 1,
       "PrimaryWeapon": null,
       "SecondaryWeapon": null,
@@ -208,7 +208,7 @@
     "default-lmg": null,
     "default-shotgun": null,
     "default-pistol": "weapon_deagle",
-    "default-round": "k4.rounds.rifle"
+    "default-round": "alerena.rounds.rifle"
   },
   "allowed-weapon-prefs": {
     "rifle": true,

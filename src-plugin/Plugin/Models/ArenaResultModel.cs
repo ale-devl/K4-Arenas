@@ -1,4 +1,4 @@
-namespace K4Arenas.Models
+namespace Alerena.Models
 {
 	public enum ArenaResultType
 	{

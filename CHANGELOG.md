@@ -1,3 +1,10 @@
+-- 2026.10.08 - 3.0.0-beta.2
+
+- breaking: renamed to alerena. Plugin folder, config (configs/plugins/alerena/alerena.json), database (alerena.db) and zips (alerena.zip, alerena-bots.zip) all use the new name; remove plugins/K4-Arenas, plugins/K4-Arenas-Bots and shared/K4-ArenaSharedApi before installing
+- breaking: the shared API is now alerena-api (namespace AlerenaApi, interface IAlerenaApi, capability alerena:api); K4-Arenas addons need rebuilding
+- breaking: language keys renamed from k4.* to alerena.*
+- docs: README reworked
+
 -- 2026.10.08 - 3.0.0-beta.1 (fork: ale-devl/K4-Arenas)
 
 - breaking: requires CounterStrikeSharp 1.0.374+ (.NET 10)

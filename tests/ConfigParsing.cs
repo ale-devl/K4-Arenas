@@ -2,14 +2,14 @@
 // Checks that config files parse the way CounterStrikeSharp parses them, and that
 // mistakes (typos, wrong casing) are captured for the startup warnings instead of vanishing.
 #:package CounterStrikeSharp.API@1.0.374
-#:project ../src-plugin/K4-Arenas.csproj
+#:project ../src-plugin/alerena.csproj
 // CounterStrikeSharp parses configs with reflection, which AOT (the default for file-based apps) disables
 #:property PublishAot=false
 
 using System.Text.Json;
-using K4Arenas;
-using K4Arenas.Models;
-using K4ArenaSharedApi;
+using Alerena;
+using Alerena.Models;
+using AlerenaApi;
 
 // Same options CounterStrikeSharp 1.0.374 uses (ConfigManager.JsonSerializerOptions)
 var options = new JsonSerializerOptions { WriteIndented = true, ReadCommentHandling = JsonCommentHandling.Skip };
@@ -35,8 +35,8 @@ string user = """
   "prevent-draws": true,
   "compatibility-settings": { "prevent-draw-rounds": false, "block-flash": true },
   "round-settings": [
-    { "TranslationName": "k4.rounds.rifle", "PrimaryPreference": 0, "primary-weapon": "weapon_ak47" },
-    { "TranslationName": "k4.rounds.awp", "PrimaryWeapon": "awp", "PrimaryPreference": "Sniper" },
+    { "TranslationName": "alerena.rounds.rifle", "PrimaryPreference": 0, "primary-weapon": "weapon_ak47" },
+    { "TranslationName": "alerena.rounds.awp", "PrimaryWeapon": "awp", "PrimaryPreference": "Sniper" },
     { "PrimaryWeapon": "weapon_deagle" }
   ],
   "ConfigVersion": 10
@@ -51,8 +51,8 @@ Check("old numeric weapon type still parses", config.RoundSettings[0].PrimaryPre
 Check("weapon type by name parses", config.RoundSettings[1].PrimaryPreference == WeaponType.Sniper);
 Check("round without TranslationName parses (validator skips it)", config.RoundSettings[2].TranslationName == "");
 
-// The shipped template (src-plugin/K4-Arenas.example.json) must parse with no ignored keys or weapons
-string templatePath = Path.Combine(Path.GetDirectoryName(SourceFile())!, "..", "src-plugin", "K4-Arenas.example.json");
+// The shipped template (src-plugin/alerena.example.json) must parse with no ignored keys or weapons
+string templatePath = Path.Combine(Path.GetDirectoryName(SourceFile())!, "..", "src-plugin", "alerena.example.json");
 PluginConfig template = JsonSerializer.Deserialize<PluginConfig>(File.ReadAllText(templatePath), options)!;
 Check("template has no unknown keys", new[] { template.UnknownKeys, template.DatabaseSettings.UnknownKeys, template.CommandSettings.UnknownKeys,
 	template.CompatibilitySettings.UnknownKeys, template.DefaultWeaponSettings.UnknownKeys, template.AllowedWeaponPreferences.UnknownKeys }

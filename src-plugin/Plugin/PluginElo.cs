@@ -1,10 +1,10 @@
-namespace K4Arenas
+namespace Alerena
 {
 	using CounterStrikeSharp.API;
 	using CounterStrikeSharp.API.Core;
 	using CounterStrikeSharp.API.Core.Translations;
 	using CounterStrikeSharp.API.Modules.Commands;
-	using K4Arenas.Models;
+	using Alerena.Models;
 	using Microsoft.Extensions.Logging;
 
 	public sealed partial class Plugin : BasePlugin
@@ -35,8 +35,8 @@ namespace K4Arenas
 			player.Controller.Score = shown;
 			Utilities.SetStateChanged(player.Controller, "CCSPlayerController", "m_iScore");
 
-			string key = change >= 0 ? "k4.chat.elo_gain" : "k4.chat.elo_loss";
-			player.Controller.PrintToChat($" {Localizer.ForPlayer(player.Controller, "k4.general.prefix")} {Localizer.ForPlayer(player.Controller, key, Math.Abs(Math.Round(change)), shown)}");
+			string key = change >= 0 ? "alerena.chat.elo_gain" : "alerena.chat.elo_loss";
+			player.Controller.PrintToChat($" {Localizer.ForPlayer(player.Controller, "alerena.general.prefix")} {Localizer.ForPlayer(player.Controller, key, Math.Abs(Math.Round(change)), shown)}");
 
 			ulong steamId = player.SteamID;
 			string name = player.Controller.PlayerName;
@@ -73,13 +73,13 @@ namespace K4Arenas
 						if (player?.IsValid != true)
 							return;
 
-						string prefix = Localizer.ForPlayer(player, "k4.general.prefix");
-						player.PrintToChat($" {prefix} {Localizer.ForPlayer(player, top.Count == 0 ? "k4.chat.top_empty" : "k4.chat.top_title")}");
+						string prefix = Localizer.ForPlayer(player, "alerena.general.prefix");
+						player.PrintToChat($" {prefix} {Localizer.ForPlayer(player, top.Count == 0 ? "alerena.chat.top_empty" : "alerena.chat.top_title")}");
 
 						for (int i = 0; i < top.Count; i++)
-							player.PrintToChat($" {Localizer.ForPlayer(player, "k4.chat.top_entry", i + 1, top[i].Name, (int)Math.Round(top[i].Rating), top[i].Wins, top[i].Losses, top[i].Draws)}");
+							player.PrintToChat($" {Localizer.ForPlayer(player, "alerena.chat.top_entry", i + 1, top[i].Name, (int)Math.Round(top[i].Rating), top[i].Wins, top[i].Losses, top[i].Draws)}");
 
-						player.PrintToChat($" {prefix} {Localizer.ForPlayer(player, "k4.chat.top_self", ownRating)}");
+						player.PrintToChat($" {prefix} {Localizer.ForPlayer(player, "alerena.chat.top_self", ownRating)}");
 					});
 				}
 				catch (Exception ex)

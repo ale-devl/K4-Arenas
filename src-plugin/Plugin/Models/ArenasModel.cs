@@ -1,7 +1,7 @@
 
 using CounterStrikeSharp.API.Core;
-using K4Arenas;
-using K4Arenas.Models;
+using Alerena;
+using Alerena.Models;
 
 public class Arenas
 {

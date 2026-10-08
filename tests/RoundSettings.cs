@@ -1,11 +1,11 @@
 // Run: dotnet run tests/RoundSettings.cs
 // Rebuilding rounds from config (startup and the admin menu) must keep rounds added by other plugins.
 #:package CounterStrikeSharp.API@1.0.374
-#:project ../src-plugin/K4-Arenas.csproj
+#:project ../src-plugin/alerena.csproj
 #:property PublishAot=false
 
-using K4Arenas;
-using K4Arenas.Models;
+using Alerena;
+using Alerena.Models;
 
 int failures = 0;
 void Check(string name, bool ok)
@@ -20,11 +20,11 @@ Check("config rounds loaded", RoundType.RoundTypes.Count == config.RoundSettings
 
 int specialId = RoundType.AddSpecialRoundType("addon.headshot", 1, true, (_, _) => { }, (_, _) => { });
 
-RoundTypeReader knife = config.RoundSettings.First(r => r.TranslationName == "k4.rounds.knife");
+RoundTypeReader knife = config.RoundSettings.First(r => r.TranslationName == "alerena.rounds.knife");
 knife.EnabledByDefault = !knife.EnabledByDefault;
 Plugin.ApplyRoundSettings(config);
 
-Check("toggled EnabledByDefault takes effect", RoundType.RoundTypes.First(r => r.Name == "k4.rounds.knife").EnabledByDefault == knife.EnabledByDefault);
+Check("toggled EnabledByDefault takes effect", RoundType.RoundTypes.First(r => r.Name == "alerena.rounds.knife").EnabledByDefault == knife.EnabledByDefault);
 Check("round added through the API survives the rebuild", RoundType.RoundTypes.Count(r => r.Name == "addon.headshot") == 1);
 Check("the API round keeps its ID (RemoveSpecialRound still works)", RoundType.RoundTypes.Single(r => r.Name == "addon.headshot").ID == specialId);
 int secondId = RoundType.AddSpecialRoundType("addon.nades", 1, true, (_, _) => { }, (_, _) => { });
