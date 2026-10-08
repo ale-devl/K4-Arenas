@@ -358,13 +358,13 @@ namespace K4Arenas
 					}
 				}
 
-				// ? Remember who met whom and who sat out alone (real players only)
+				// ? Remember who met whom (real players only); alone or against bots counts as sitting out
 				foreach (Arena arena in Arenas.ArenaList.Where(a => a.ArenaID > 0))
 				{
 					List<ArenaPlayer> team1 = arena.Team1?.Where(p => !p.Controller.IsBot).ToList() ?? [];
 					List<ArenaPlayer> team2 = arena.Team2?.Where(p => !p.Controller.IsBot).ToList() ?? [];
 
-					if (arena.Team1 is null || arena.Team2 is null)
+					if (team1.Count == 0 || team2.Count == 0)
 						team1.Concat(team2).ToList().ForEach(p => MatchHistory.RecordBye(p.SteamID));
 					else
 						foreach (ArenaPlayer a in team1)
