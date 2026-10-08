@@ -31,17 +31,10 @@ public class ArenaPlayer
 
 	//** ? Settings */
 	public bool AFK = false;
-	public Dictionary<WeaponType, CsItem?> WeaponPreferences = new Dictionary<WeaponType, CsItem?>
-	{
-		{ WeaponType.Rifle, null },
-		{ WeaponType.Sniper, null },
-		{ WeaponType.SMG, null },
-		{ WeaponType.LMG, null },
-		{ WeaponType.Shotgun, null },
-		{ WeaponType.Pistol, null }
-	};
+	public Dictionary<WeaponType, CsItem?> WeaponPreferences;
 
-	public List<RoundType> RoundPreferences = [.. RoundType.RoundTypes];
+	// Config defaults; saved preferences replace these once loaded from the database
+	public List<RoundType> RoundPreferences = [.. RoundType.RoundTypes.Where(r => r.EnabledByDefault)];
 
 	public ArenaPlayer(Plugin plugin, CCSPlayerController playerController)
 	{
@@ -52,6 +45,17 @@ public class ArenaPlayer
 		Controller = playerController;
 		SteamID = playerController.SteamID;
 		PlayerIsSafe = playerController.IsBot;
+
+		DefaultWeaponSettings dws = Config.DefaultWeaponSettings;
+		WeaponPreferences = new Dictionary<WeaponType, CsItem?>
+		{
+			{ WeaponType.Rifle, Plugin.FindEnumValueByEnumMemberValue(dws.DefaultRifle) },
+			{ WeaponType.Sniper, Plugin.FindEnumValueByEnumMemberValue(dws.DefaultSniper) },
+			{ WeaponType.SMG, Plugin.FindEnumValueByEnumMemberValue(dws.DefaultSMG) },
+			{ WeaponType.LMG, Plugin.FindEnumValueByEnumMemberValue(dws.DefaultLMG) },
+			{ WeaponType.Shotgun, Plugin.FindEnumValueByEnumMemberValue(dws.DefaultShotgun) },
+			{ WeaponType.Pistol, Plugin.FindEnumValueByEnumMemberValue(dws.DefaultPistol) }
+		};
 	}
 
 	public bool IsValid

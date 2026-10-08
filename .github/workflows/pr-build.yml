@@ -51,6 +51,9 @@ jobs:
           dotnet publish src-plugin/K4-Arenas.csproj -c Release
           dotnet publish src-botsplugin/K4-Arenas-Bots.csproj -c Release
 
+      - name: Test
+        run: dotnet run tests/ConfigParsing.cs
+
       - name: Zip
         run: |
           (cd src-plugin/bin/K4-Arenas && zip -qr "$GITHUB_WORKSPACE/K4-Arenas.zip" .)

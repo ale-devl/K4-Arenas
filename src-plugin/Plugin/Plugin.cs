@@ -10,6 +10,7 @@
     using CounterStrikeSharp.API.Modules.Timers;
     using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
     using System.Runtime.InteropServices;
+    using System.Text.Json;
 
     [MinimumApiVersion(374)]
     public sealed partial class Plugin : BasePlugin, IPluginConfig<PluginConfig>
@@ -29,6 +30,8 @@
                 base.Logger.LogWarning("Configuration version mismatch (Expected: {0} | Current: {1})", this.Config.Version, config.Version);
             }
 
+            ValidateConfig(config);
+
             //** ? Load Round Types */
 
             if (config.RoundSettings.Count > 0)
@@ -42,7 +45,59 @@
             else
                 RoundType.ResetRoundTypes();
 
+            string? defaultRound = config.DefaultWeaponSettings.DefaultRound;
+            if (!string.IsNullOrEmpty(defaultRound) && !RoundType.RoundTypes.Any(rt => rt.Name == defaultRound))
+                Logger.LogWarning("Config: default-round '{Round}' matches no round in round-settings", defaultRound);
+
+            Logger.LogInformation("Config loaded from configs/plugins/{Folder}/ with {Count} round type(s)", Path.GetFileName(ModuleDirectory), RoundType.RoundTypes.Count);
+
             this.Config = config;
+        }
+
+        // Values that parse fine but would be silently ignored get a warning naming the field
+        private void ValidateConfig(PluginConfig config)
+        {
+            void WarnUnknownKeys(string section, Dictionary<string, JsonElement>? keys)
+            {
+                foreach (string key in keys?.Keys ?? Enumerable.Empty<string>())
+                    Logger.LogWarning("Config: unknown key '{Key}' in {Section} is ignored, check the spelling", key, section);
+            }
+
+            void WarnUnknownWeapon(string field, string? weapon)
+            {
+                if (weapon != null && FindEnumValueByEnumMemberValue(weapon) == null)
+                    Logger.LogWarning("Config: unknown weapon '{Weapon}' in {Field} is ignored, expected a name like 'weapon_ak47'", weapon, field);
+            }
+
+            WarnUnknownKeys("the top level", config.UnknownKeys);
+            WarnUnknownKeys("database-settings", config.DatabaseSettings.UnknownKeys);
+            WarnUnknownKeys("command-settings", config.CommandSettings.UnknownKeys);
+            WarnUnknownKeys("compatibility-settings", config.CompatibilitySettings.UnknownKeys);
+            WarnUnknownKeys("default-weapon-settings", config.DefaultWeaponSettings.UnknownKeys);
+            WarnUnknownKeys("allowed-weapon-prefs", config.AllowedWeaponPreferences.UnknownKeys);
+
+            DefaultWeaponSettings dws = config.DefaultWeaponSettings;
+            WarnUnknownWeapon("default-rifle", dws.DefaultRifle);
+            WarnUnknownWeapon("default-sniper", dws.DefaultSniper);
+            WarnUnknownWeapon("default-smg", dws.DefaultSMG);
+            WarnUnknownWeapon("default-lmg", dws.DefaultLMG);
+            WarnUnknownWeapon("default-shotgun", dws.DefaultShotgun);
+            WarnUnknownWeapon("default-pistol", dws.DefaultPistol);
+
+            for (int i = 0; i < config.RoundSettings.Count; i++)
+            {
+                RoundTypeReader round = config.RoundSettings[i];
+                string where = $"round-settings[{i}]";
+
+                WarnUnknownKeys(where, round.UnknownKeys);
+                WarnUnknownWeapon($"{where}.PrimaryWeapon", round.PrimaryWeapon);
+                WarnUnknownWeapon($"{where}.SecondaryWeapon", round.SecondaryWeapon);
+
+                if (string.IsNullOrWhiteSpace(round.TranslationName))
+                    Logger.LogWarning("Config: {Where} has no TranslationName and is skipped", where);
+            }
+
+            config.RoundSettings.RemoveAll(r => string.IsNullOrWhiteSpace(r.TranslationName));
         }
 
         public Queue<ArenaPlayer> WaitingArenaPlayers { get; set; } = new Queue<ArenaPlayer>();
