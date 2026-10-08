@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace K4ArenaBots;
 
-[MinimumApiVersion(284)]
+[MinimumApiVersion(374)]
 public class Plugin : BasePlugin
 {
 	public override string ModuleName => "K4-Arenas Addon - Bots Support";
@@ -187,7 +187,7 @@ public class Plugin : BasePlugin
 				continue;
 			}
 
-			if(controller.Connected == PlayerConnectedState.PlayerConnected && SharedAPI_Arena?.IsAFK(controller) == false)
+			if(controller.Connected == PlayerConnectedState.Connected && SharedAPI_Arena?.IsAFK(controller) == false)
 				players.Add(controller);
 		}
 		return (players, bots);

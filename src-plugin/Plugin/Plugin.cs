@@ -11,13 +11,12 @@
     using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
     using System.Runtime.InteropServices;
 
-    [MinimumApiVersion(200)]
+    [MinimumApiVersion(374)]
     public sealed partial class Plugin : BasePlugin, IPluginConfig<PluginConfig>
     {
         //** ? PLUGIN GLOBALS */
         public required PluginConfig Config { get; set; } = new PluginConfig();
         public GameConfig? GameConfig { get; set; }
-        public Menu.KitsuneMenu Menu { get; private set; } = null!;
         public bool IsBetweenRounds = false;
         public bool HasDatabase = false;
 
@@ -74,8 +73,6 @@
                 base.Logger.LogError("Please setup your MySQL database settings in the configuration file in order to use the preferences system.");
             }
 
-            Menu = new Menu.KitsuneMenu(this);
-
             //** ? Core */
 
             Initialize_API();
@@ -113,7 +110,7 @@
                     if (Arenas is null) return;
 
                     var validPlayers = Utilities.GetPlayers()
-                        .Where(p => p?.IsValid == true && p.PlayerPawn?.IsValid == true && !p.IsBot && !p.IsHLTV && p.Connected == PlayerConnectedState.PlayerConnected);
+                        .Where(p => p?.IsValid == true && p.PlayerPawn?.IsValid == true && !p.IsBot && !p.IsHLTV && p.Connected == PlayerConnectedState.Connected);
 
                     foreach (CCSPlayerController player in validPlayers)
                     {

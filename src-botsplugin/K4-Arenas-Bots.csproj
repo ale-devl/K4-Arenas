@@ -6,22 +6,21 @@
     <PublishDir>./bin/K4-Arenas-Bots/plugins/K4-Arenas-Bots/</PublishDir>
   </PropertyGroup>
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CounterStrikeSharp.API" Version="*">
+    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.374">
       <PrivateAssets>none</PrivateAssets>
       <ExcludeAssets>runtime</ExcludeAssets>
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <Reference Include="K4ArenaSharedApi">
-      <HintPath>../src-shared/K4-ArenaSharedApi.dll</HintPath>
+    <ProjectReference Include="../src-shared/K4-ArenaSharedApi.csproj">
       <Private>false</Private>
-    </Reference>
+    </ProjectReference>
   </ItemGroup>
   <Target Name="CopyCustomFilesToPublishDirectory" AfterTargets="Publish">
-    <Copy SourceFiles="$(ProjectDir)$(ReferencePath)../src-shared/K4-ArenaSharedApi.dll" DestinationFolder="$(PublishDir)../../shared/K4-ArenaSharedApi/" />
+    <Copy SourceFiles="$(ProjectDir)../src-shared/bin/$(Configuration)/$(TargetFramework)/K4-ArenaSharedApi.dll" DestinationFolder="$(PublishDir)../../shared/K4-ArenaSharedApi/" />
   </Target>
 </Project>

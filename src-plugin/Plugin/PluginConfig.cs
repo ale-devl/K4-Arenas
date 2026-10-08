@@ -227,17 +227,8 @@ namespace K4Arenas
 			"cdeny"
 		];
 
-		[JsonPropertyName("center-menu-mode")]
-		public bool CenterMenuMode { get; set; } = true;
-
 		[JsonPropertyName("center-announce-mode")]
 		public bool CenterAnnounceMode { get; set; } = true;
-
-		[JsonPropertyName("freeze-in-center-menu")]
-		public bool FreezeInMenu { get; set; } = true;
-
-		[JsonPropertyName("show-menu-credits")]
-		public bool ShowMenuCredits { get; set; } = true;
 	}
 
 	public sealed class DefaultWeaponSettings
