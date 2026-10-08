@@ -43,6 +43,16 @@ try
 	Check("untouched weapon types stay unset", !saved.Weapons.ContainsKey(WeaponType.Sniper));
 	Check("round toggles round-trip by name", saved.Rounds["k4.rounds.knife"] && !saved.Rounds["k4.rounds.awp"]);
 
+	Check("no rating before the first rated duel", await PlayerStore.LoadRatingAsync(db, Alice) is null);
+	await PlayerStore.SaveRatingAsync(db, Alice, "Alice", 1016, 1);
+	await PlayerStore.SaveRatingAsync(db, Alice, "Alice", 1016, 0.5);
+	await PlayerStore.SaveRatingAsync(db, Alice, "Alice (renamed)", 1002, 0);
+	await PlayerStore.SaveRatingAsync(db, Bob, "Bob", 1050, 1);
+	Check("rating round-trips", await PlayerStore.LoadRatingAsync(db, Alice) == 1002);
+	List<PlayerStore.Rank> top = await PlayerStore.TopAsync(db, 10);
+	Check("top list is sorted by rating and uses the latest name", top.Select(r => r.Name).SequenceEqual(["Bob", "Alice (renamed)"]));
+	Check("wins, losses and draws add up", top[1] is { Wins: 1, Losses: 1, Draws: 1 });
+
 	await using (var connection = new SqliteConnection($"Data Source={db}"))
 	{
 		// Unknown names (e.g. renamed items) and broken JSON must not break loading
@@ -59,6 +69,7 @@ try
 	Check("purge days 0 keeps everyone", await PlayerStore.PurgeAsync(db, 0) == 0);
 	Check("purge removes only players older than the limit", await PlayerStore.PurgeAsync(db, 30) == 1);
 	Check("recent player kept after purge", (await PlayerStore.LoadAsync(db, Alice)).Weapons.Count == 1);
+	Check("purge also drops the ratings of removed players", (await PlayerStore.TopAsync(db, 10)).Select(r => r.Name).SequenceEqual(["Alice (renamed)"]));
 }
 finally
 {

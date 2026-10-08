@@ -77,6 +77,7 @@
             WarnUnknownKeys("database-settings", config.DatabaseSettings.UnknownKeys);
             WarnUnknownKeys("command-settings", config.CommandSettings.UnknownKeys);
             WarnUnknownKeys("compatibility-settings", config.CompatibilitySettings.UnknownKeys);
+            WarnUnknownKeys("elo-settings", config.EloSettings.UnknownKeys);
             WarnUnknownKeys("default-weapon-settings", config.DefaultWeaponSettings.UnknownKeys);
             WarnUnknownKeys("allowed-weapon-prefs", config.AllowedWeaponPreferences.UnknownKeys);
 

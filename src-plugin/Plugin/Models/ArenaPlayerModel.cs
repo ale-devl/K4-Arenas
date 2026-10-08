@@ -29,6 +29,7 @@ public class ArenaPlayer
 
 	//** ? Settings */
 	public bool AFK = false;
+	public double Rating;
 
 	// Only what the player explicitly picked (loaded from the database); everything else follows the config.
 	// A null weapon means the player picked "Random".
@@ -66,6 +67,7 @@ public class ArenaPlayer
 		Controller = playerController;
 		SteamID = playerController.SteamID;
 		PlayerIsSafe = playerController.IsBot;
+		Rating = Plugin.Config.EloSettings.StartRating;
 	}
 
 	public bool IsValid

@@ -140,6 +140,9 @@ namespace K4Arenas
 		[JsonPropertyName("compatibility-settings")]
 		public CompatibilitySettings CompatibilitySettings { get; set; } = new CompatibilitySettings();
 
+		[JsonPropertyName("elo-settings")]
+		public EloSettings EloSettings { get; set; } = new EloSettings();
+
 		[JsonPropertyName("default-weapon-settings")]
 		public DefaultWeaponSettings DefaultWeaponSettings { get; set; } = new DefaultWeaponSettings();
 
@@ -169,6 +172,16 @@ namespace K4Arenas
 
 		[JsonPropertyName("prevent-draw-rounds")]
 		public bool PreventDrawRounds { get; set; } = true;
+	}
+
+	public sealed class EloSettings : ConfigSection
+	{
+		// How far one duel can move a rating: higher means faster swings
+		[JsonPropertyName("k-factor")]
+		public double KFactor { get; set; } = 32;
+
+		[JsonPropertyName("start-rating")]
+		public double StartRating { get; set; } = 1000;
 	}
 
 	public sealed class AllowedWeaponPreferences : ConfigSection
@@ -240,6 +253,13 @@ namespace K4Arenas
 		[
 			"cdecline",
 			"cdeny"
+		];
+
+		[JsonPropertyName("top-commands")]
+		public List<string> TopCommands { get; set; } =
+		[
+			"top",
+			"elo"
 		];
 
 		[JsonPropertyName("center-announce-mode")]

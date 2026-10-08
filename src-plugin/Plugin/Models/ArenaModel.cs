@@ -16,7 +16,6 @@ public class Arena
 
 	//** ? Arena Main Details */
 	public int ArenaID;
-	private int ArenaScore;
 	private RoundType RoundType = null!; // assigned together with the teams
 	public readonly Tuple<List<SpawnPoint>, List<SpawnPoint>> Spawns;
 	public ArenaResult Result = new ArenaResult(ArenaResultType.Empty, null, null);
@@ -47,7 +46,6 @@ public class Arena
 		Team1 = team1;
 		Team2 = team2;
 		RoundType = Plugin.GetCommonRoundType(team1.First().RoundPreferences, team2.First().RoundPreferences, false);
-		ArenaScore = 0;
 
 		var (t1Spawns, t2Spawns) = Random.Shared.Next(0, 2) == 1 ? (Spawns.Item1, Spawns.Item2) : (Spawns.Item2, Spawns.Item1);
 
@@ -58,14 +56,13 @@ public class Arena
 		SetPlayerDetails(Team2, t2Spawns, CsTeam.CounterTerrorist, Team1);
 	}
 
-	public void AddPlayers(List<ArenaPlayer>? team1, List<ArenaPlayer>? team2, RoundType? roundType, int arenaID = -1, int arenaScore = 0)
+	public void AddPlayers(List<ArenaPlayer>? team1, List<ArenaPlayer>? team2, RoundType? roundType, int arenaID = -1)
 	{
 		ArenaID = arenaID;
 		Team1 = team1;
 		Team2 = team2;
 		RoundType = roundType ?? RoundType.RoundTypes[0];
 		Result = new ArenaResult(ArenaResultType.Empty, null, null);
-		ArenaScore = arenaScore;
 
 		if (Team1 is null && Team2 is null)
 			return;
@@ -90,7 +87,6 @@ public class Arena
 
 		ArenaID = -1;
 		RoundType = new RoundType("none", 1, null, null, false, WeaponType.Unknown, false);
-		ArenaScore = 0;
 
 		var (t1Spawns, t2Spawns) = Random.Shared.Next(0, 2) == 1 ? (Spawns.Item1, Spawns.Item2) : (Spawns.Item2, Spawns.Item1);
 
@@ -156,12 +152,12 @@ public class Arena
 				player.Controller.MVPs = player.MVPs;
 				Utilities.SetStateChanged(player.Controller, "CCSPlayerController", "m_iMVPs");
 
-				player.Controller.Score = ArenaScore;
+				player.Controller.Score = (int)Math.Round(player.Rating);
 				Utilities.SetStateChanged(player.Controller, "CCSPlayerController", "m_iScore");
 
 				if (player.Controller.ActionTrackingServices != null)
 				{
-					player.Controller.ActionTrackingServices.MatchStats.Damage = ArenaScore;
+					player.Controller.ActionTrackingServices.MatchStats.Damage = (int)Math.Round(player.Rating);
 					Utilities.SetStateChanged(player.Controller, "CCSPlayerController", "m_pActionTrackingServices");
 				}
 

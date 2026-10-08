@@ -27,6 +27,11 @@ namespace K4Arenas
 				AddCommand($"css_{commandString}", "Opens the weapon preference menu", Command_WeaponPref);
 			});
 
+			Config.CommandSettings.TopCommands.ForEach(commandString =>
+			{
+				AddCommand($"css_{commandString}", "Shows the best players by Elo", Command_Top);
+			});
+
 			Config.CommandSettings.AFKCommands.ForEach(commandString =>
 			{
 				AddCommand($"css_{commandString}", "Toggles the AFK status", Command_AFK);
