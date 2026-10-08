@@ -3,10 +3,21 @@ namespace K4Arenas
 	using CounterStrikeSharp.API.Core;
 	using K4Arenas.Models;
 	using K4ArenaSharedApi;
+	using System.Text.Json;
 	using System.Text.Json.Serialization;
+
+	// Collects keys the config classes don't know (typos, wrong casing) so they can be reported instead of silently ignored
+	public abstract class ConfigSection
+	{
+		[JsonExtensionData]
+		public Dictionary<string, JsonElement>? UnknownKeys { get; set; }
+	}
 
 	public sealed class PluginConfig : BasePluginConfig
 	{
+		[JsonExtensionData]
+		public Dictionary<string, JsonElement>? UnknownKeys { get; set; }
+
 		[JsonPropertyName("use-predefined-config")]
 		public bool UsePredefinedConfig { get; set; } = true;
 
@@ -135,7 +146,7 @@ namespace K4Arenas
 		public override int Version { get; set; } = 10;
 	}
 
-	public sealed class CompatibilitySettings
+	public sealed class CompatibilitySettings : ConfigSection
 	{
 		[JsonPropertyName("force-arena-clantags")]
 		public bool ForceArenaClantags { get; set; } = false;
@@ -156,7 +167,7 @@ namespace K4Arenas
 		public bool PreventDrawRounds { get; set; } = true;
 	}
 
-	public sealed class AllowedWeaponPreferences
+	public sealed class AllowedWeaponPreferences : ConfigSection
 	{
 		[JsonPropertyName("rifle")]
 		public bool Rifle { get; set; } = true;
@@ -177,7 +188,7 @@ namespace K4Arenas
 		public bool Pistol { get; set; } = true;
 	}
 
-	public sealed class CommandSettings
+	public sealed class CommandSettings : ConfigSection
 	{
 		[JsonPropertyName("gun-pref-commands")]
 		public List<string> GunsCommands { get; set; } =
@@ -231,7 +242,7 @@ namespace K4Arenas
 		public bool CenterAnnounceMode { get; set; } = true;
 	}
 
-	public sealed class DefaultWeaponSettings
+	public sealed class DefaultWeaponSettings : ConfigSection
 	{
 		[JsonPropertyName("default-rifle")]
 		public string? DefaultRifle { get; set; } = null;
@@ -255,7 +266,7 @@ namespace K4Arenas
 		public string? DefaultRound { get; set; } = "k4.rounds.rifle";
 	}
 
-	public sealed class DatabaseSettings
+	public sealed class DatabaseSettings : ConfigSection
 	{
 		[JsonPropertyName("host")]
 		public string Host { get; set; } = "localhost";

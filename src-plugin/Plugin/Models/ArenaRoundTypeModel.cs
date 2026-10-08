@@ -1,4 +1,5 @@
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
 using K4Arenas.Models;
@@ -103,13 +104,14 @@ namespace K4Arenas.Models
 	}
 }
 
-public class RoundTypeReader
+public class RoundTypeReader : K4Arenas.ConfigSection
 {
-	public required string TranslationName { get; set; }
+	public string TranslationName { get; set; } = string.Empty;
 	public int TeamSize { get; set; } = 1;
 	public string? PrimaryWeapon { get; set; } = null;
 	public string? SecondaryWeapon { get; set; } = null;
 	public bool UsePreferredPrimary { get; set; } = false;
+	[JsonConverter(typeof(JsonStringEnumConverter))]
 	public WeaponType? PrimaryPreference { get; set; } = null;
 	public bool UsePreferredSecondary { get; set; } = false;
 	public bool Armor { get; set; } = true;
